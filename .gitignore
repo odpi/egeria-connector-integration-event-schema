@@ -104,5 +104,3 @@ jitdump*dmp
 !gradle/**
 .gradle/
 build/
-/.dockerrun/Dockerfile.run.xml
-/.dockerrun/

@@ -7,10 +7,4 @@
 # Top level
 
 # TODO: Update with new owners of files added
-/* @davidradl
-/.github @planetf1
-*.gradle @planetf1
-gradle* @planetf1
-gradle/ @planetf1
-SECURITY.md @planetf1
-Dockerfile @planetf1
+/* @mandy-chessell @planetf1
