@@ -50,10 +50,12 @@ dependencies {
 
     // Needed for build and run
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     // Only needed to compile test code
     testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
 
 }
