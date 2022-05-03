@@ -3,8 +3,6 @@ package org.odpi.openmetadata.adapters.connectors.integration.eventschema.connec
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.odpi.openmetadata.adapters.connectors.integration.eventschema.EventSchemaIntegrationConnector;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.ConnectorCheckedException;
 
 import java.util.List;
 

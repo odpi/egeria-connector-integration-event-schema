@@ -4,11 +4,9 @@
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
 import com.google.gson.JsonElement;
-import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
-import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
-import org.odpi.openmetadata.adapters.connectors.integration.eventschema.commands.ContextCommand;
-import org.odpi.openmetadata.adapters.connectors.integration.eventschema.commands.CreateEventTypeCommand;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.EventTypeMapper;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.SchemaAttributeMapper;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.ConnectorCheckedException;
 
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorConnector;
@@ -23,21 +21,18 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
 
     protected ConnectionStrategy delegate= null;
     protected Map<String, List<String>> subjectCache = new HashMap<>();
-    static final String SEPARATOR = ".";
-    protected TopicIntegratorContext context;
 
-    // list of commands to execute
-    List<ContextCommand> commands;
-    /**
-     * for testing
-     *
-     * @return a list of Context Commands that can be executed to sync Egeria with Atlas content
-     */
-    public List<ContextCommand> getCommands() {
-        return commands;
+    @Override
+    public void setContext(TopicIntegratorContext context) {
+        this.context = context;
     }
 
-    public void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
+    protected TopicIntegratorContext context;
+    protected EventTypeMapper eventTypeMapper;
+    protected SchemaAttributeMapper schemaAttributeMapper;
+
+
+    void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
         delegate = connectionStrategy;
     }
 
@@ -52,13 +47,11 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
 
     @Override
     public void refresh() throws ConnectorCheckedException {
-        // reset the commands to issue
-        commands = new ArrayList<>();
-
         getSchemaRegistryContend();
     }
 
     protected void getSchemaRegistryContend() {
+        eventTypeMapper = new EventTypeMapper(context);
         List<String> subjects = delegate.listAllSubjects();
 
         for (String subject : subjects) {
@@ -86,27 +79,19 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     private void addSchema(String schema, String version, String subject) {
         JsonObject ob = JsonParser.parseString(schema).getAsJsonObject();
         JsonElement fieldsObject = ob.get("fields");
-        createEgeriaEventType(ob, version, subject);
+        String guid = eventTypeMapper.createEgeriaEventType(ob, version, subject);
         if (fieldsObject != null || fieldsObject.isJsonArray()) {
             JsonArray fields = fieldsObject.getAsJsonArray();
-//            for ()
+            for (Iterator<JsonElement> it = fields.iterator(); it.hasNext(); ) {
+                JsonElement field = it.next();
+                if (field.isJsonObject()) {
+                    schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
+                    //TODO
+                    schemaAttributeMapper.mapEgeriaSchemaAttribute();
+                }
+
+            }
         }
     }
 
-    private void createEgeriaEventType(JsonObject jsEventType, String version, String subject) {
-        String name = jsEventType.get("name").getAsString();
-        String doc = jsEventType.get("doc").getAsString();
-        String namespace = jsEventType.get("namespace").getAsString();
-        String type = jsEventType.get("type").getAsString();
-        String qualifiedName = subject + SEPARATOR + namespace + SEPARATOR + name;
-        EventTypeProperties eventProperties = new EventTypeProperties();
-        eventProperties.setDisplayName(name);
-        eventProperties.setQualifiedName(name);
-        eventProperties.setDescription(doc);
-        eventProperties.setNamespace(namespace);
-        eventProperties.setTypeName(type);
-        eventProperties.setVersionNumber(version);
-        CreateEventTypeCommand command = new CreateEventTypeCommand(context, "", eventProperties);
-        commands.add(command);
-    }
 }

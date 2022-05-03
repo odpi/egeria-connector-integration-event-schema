@@ -31,14 +31,14 @@ public class ConfluentRestCalls implements ConnectionStrategy {
      * First we concentrate on the functionality.
      */
     final private String targetURL;
-    final private String atlasUserid;
-    final private String atlasPassword;
+    final private String confluentUserid;
+    final private String confluentPassword;
 
-    public ConfluentRestCalls(String targetURL, String atlasUserid, String atlasPassword) {
+    public ConfluentRestCalls(String targetURL, String confluentUserid, String confluentPassword) {
         super();
         this.targetURL = targetURL;
-        this.atlasUserid = atlasUserid;
-        this.atlasPassword = atlasPassword;
+        this.confluentUserid = confluentUserid;
+        this.confluentPassword = confluentPassword;
     }
 
     /**
@@ -114,7 +114,7 @@ public class ConfluentRestCalls implements ConnectionStrategy {
         // set authentication
         HttpHeaders authHeaders = new HttpHeaders();
 
-        authHeaders.setBasicAuth(atlasUserid, atlasPassword);
+        authHeaders.setBasicAuth(confluentUserid, confluentPassword);
 
         return new HttpEntity<>(authHeaders);
 
