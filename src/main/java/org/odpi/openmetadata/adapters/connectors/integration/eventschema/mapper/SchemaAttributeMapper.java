@@ -9,42 +9,55 @@ import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class SchemaAttributeMapper {
 
+    public static final String TYPE = "type";
+    public static final String DEFAULT = "default";
+    public static final String NAME = "name";
+    public static final String DOC = "doc";
+    public static final String FIELDS = "fields";
     final TopicIntegratorContext context;
-    final JsonObject jsEventType;
+    final JsonObject jsObject;
     final String parentGUID;
     final SchemaAttributeProperties schemaAttributeProperties = new SchemaAttributeProperties();
     String guid = null;
 
-    public SchemaAttributeMapper(TopicIntegratorContext context, JsonObject jsEventType, String parentGUID) {
+    public List<SchemaAttributeMapper> getChildSchemaAttributes() {
+        return childSchemaAttributes;
+    }
+
+    List<SchemaAttributeMapper> childSchemaAttributes = new ArrayList<>();
+
+    public SchemaAttributeMapper(TopicIntegratorContext context, JsonObject jsObject, String parentGUID) {
         this.context = context;
-        this.jsEventType = jsEventType;
+        this.jsObject = jsObject;
         this.parentGUID = parentGUID;
     }
 
     public String getName() {
-        return jsEventType.get("name").getAsString();
+        return jsObject.get(NAME).getAsString();
     }
 
     public String getDoc() {
-        if (jsEventType.has("doc")) {
-            return jsEventType.get("doc").getAsString();
+        if (jsObject.has(DOC)) {
+            return jsObject.get(DOC).getAsString();
         }
         return null;
     }
 
     public String getType() {
-        if (!jsEventType.has("type")) {
+        if (!jsObject.has(TYPE)) {
             return null;
         }
-        if (jsEventType.get("type").isJsonPrimitive()) {
-            return jsEventType.getAsJsonPrimitive("type").getAsString();
+        if (jsObject.get(TYPE).isJsonPrimitive()) {
+            return jsObject.getAsJsonPrimitive(TYPE).getAsString();
         }
-        if (jsEventType.get("type").isJsonArray()) {
-            JsonArray typeObject = jsEventType.getAsJsonArray("type");
+        if (jsObject.get(TYPE).isJsonArray()) {
+            JsonArray typeObject = jsObject.getAsJsonArray(TYPE);
             if (typeObject.isEmpty() || typeObject.isJsonNull()) {
                 return null;
             }
@@ -52,27 +65,88 @@ public class SchemaAttributeMapper {
                 JsonElement typetype = it.next();
                 if (typetype.isJsonObject()) {
                     JsonObject typetypeObject = (JsonObject) typetype;
-                    if (typetypeObject.has("type")) {
-                        return typetypeObject.get("name").getAsString();
+                    if (typetypeObject.has(NAME)) {
+                        return typetypeObject.get(NAME).getAsString();
+                    }
+                    if (typetypeObject.has(TYPE)) {
+                        return typetypeObject.get(TYPE).getAsString();
                     }
                 }
-
             }
         }
-        if (jsEventType.get("type").isJsonObject()) {
-            JsonObject typeObject = jsEventType.getAsJsonObject("type");
-            if (typeObject.has("type")) {
-                return typeObject.get("type").getAsString();
+        if (jsObject.get(TYPE).isJsonObject()) {
+            JsonObject typeObject = jsObject.getAsJsonObject(TYPE);
+            if (typeObject.has(TYPE)) {
+                return typeObject.get(TYPE).getAsString();
             }
         }
         return null;
     }
 
     public String getDefault() {
-        if (jsEventType.has("default") && !jsEventType.get("default").isJsonNull()) {
-            return jsEventType.get("default").getAsString();
+        if (jsObject.has(DEFAULT) && !jsObject.get(DEFAULT).isJsonNull()) {
+            return jsObject.get(DEFAULT).getAsString();
         }
         return null;
+    }
+
+    public boolean isNullable() {
+        if (jsObject.get(TYPE).isJsonPrimitive()) {
+            return false;
+        }
+        if (jsObject.get(TYPE).isJsonArray()) {
+            JsonArray typeObject = jsObject.getAsJsonArray(TYPE);
+            if (typeObject.isEmpty() || typeObject.isJsonNull()) {
+                return false;
+            }
+            for (Iterator<JsonElement> it = typeObject.iterator(); it.hasNext(); ) {
+                JsonElement typetype = it.next();
+                if (typetype.isJsonPrimitive()) {
+                    return "null".equals(typetype.getAsString());
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<JsonObject> getChildren() {
+        List<JsonObject> children = new ArrayList<>();
+        JsonElement fields = null;
+        if (!jsObject.has(TYPE) || jsObject.get(TYPE).isJsonPrimitive()) {
+            return children;
+        }
+        if (jsObject.get(TYPE).isJsonArray()) {
+            JsonArray typeObject = jsObject.getAsJsonArray(TYPE);
+            if (typeObject.isEmpty() || typeObject.isJsonNull()) {
+                return children;
+            }
+            for (Iterator<JsonElement> it = typeObject.iterator(); it.hasNext(); ) {
+                JsonElement typetype = it.next();
+                if (typetype.isJsonObject()) {
+                    JsonObject typetypeObject = (JsonObject) typetype;
+                    if (typetypeObject.has(FIELDS)) {
+                        fields =  typetypeObject.get(FIELDS);
+                    }
+                }
+            }
+        }
+        if (jsObject.get(TYPE).isJsonObject()) {
+            JsonObject typeObject = jsObject.getAsJsonObject(TYPE);
+            if (typeObject.has(FIELDS)) {
+                fields = typeObject.get(FIELDS);
+            }
+        }
+        if (fields != null && fields.isJsonArray()) {
+            JsonArray fieldsObject = (JsonArray) fields;
+            for (Iterator<JsonElement> it = fieldsObject.iterator(); it.hasNext(); ) {
+                JsonElement field = it.next();
+                if (field.isJsonObject()) {
+                   children.add((JsonObject) field);
+                }
+            }
+        }
+
+        return children;
     }
 
     public void mapEgeriaSchemaAttribute() {
@@ -80,6 +154,7 @@ public class SchemaAttributeMapper {
         schemaAttributeProperties.setDescription(getDoc());
         schemaAttributeProperties.setTypeName(getType());
         schemaAttributeProperties.setDefaultValue(getDefault());
+        schemaAttributeProperties.setIsNullable(isNullable());
     }
 
     public String createEgeriaSchemaAttribute() {
@@ -93,5 +168,15 @@ public class SchemaAttributeMapper {
             e.printStackTrace();
         }
         return guid;
+    }
+
+    public void map() {
+        mapEgeriaSchemaAttribute();
+        String guid = createEgeriaSchemaAttribute();
+        for (JsonObject json : getChildren()) {
+            SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, json, guid);
+            mapper.map();
+            childSchemaAttributes.add(mapper);
+        }
     }
 }
