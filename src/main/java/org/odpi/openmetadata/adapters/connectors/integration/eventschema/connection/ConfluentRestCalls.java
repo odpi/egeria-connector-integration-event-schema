@@ -105,9 +105,7 @@ public class ConfluentRestCalls implements ConnectionStrategy {
         String urlWithQueryParameters = targetURL + "/subjects/" + subject + "/versions/" + version + "/schema/";
         ResponseEntity<String> responseEntity = restTemplate.exchange(urlWithQueryParameters, HttpMethod.GET, request, String.class);
 
-        String jsonResponse = responseEntity.getBody();
-
-        return jsonResponse;
+        return responseEntity.getBody();
     }
 
     private HttpEntity<?> createHTTPTemplate() {

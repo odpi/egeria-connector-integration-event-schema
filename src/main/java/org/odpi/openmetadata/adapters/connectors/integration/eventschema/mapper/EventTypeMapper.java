@@ -19,11 +19,6 @@ public class EventTypeMapper {
         this.context = context;
     }
 
-    public void setContext(TopicIntegratorContext context){
-        this.context = context;
-    }
-
-
     public String createEgeriaEventType(JsonObject jsEventType, String version, String subject) {
         String name = jsEventType.get("name").getAsString();
         String doc = jsEventType.get("doc").getAsString();
@@ -40,13 +35,8 @@ public class EventTypeMapper {
         String topicName = computeTopicName(jsEventType, version, subject);
         try {
             String topicGUID = getTopicGuid(topicName);
-            String guid = context.createEventType(topicGUID, eventProperties);
-            return guid;
-        } catch (InvalidParameterException e) {
-            e.printStackTrace();
-        } catch (UserNotAuthorizedException e) {
-            e.printStackTrace();
-        } catch (PropertyServerException e) {
+            return context.createEventType(topicGUID, eventProperties);
+        } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
             e.printStackTrace();
         }
         return null;
@@ -67,11 +57,6 @@ public class EventTypeMapper {
      * The topic name ist not part of the returned schema information. It has to be derived, depending on the naming strategy
      * Please override this method if another strategy is used.
      * The implemented strategy is based on the subject name. The other parameters are not used.
-     *
-     * @param jsEventType
-     * @param version
-     * @param subject
-     * @return
      */
     protected String computeTopicName(JsonObject jsEventType, String version, String subject) {
         if (subject == null || !subject.contains("-")) {

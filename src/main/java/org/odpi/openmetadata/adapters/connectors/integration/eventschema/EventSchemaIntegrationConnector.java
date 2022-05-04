@@ -80,10 +80,9 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         JsonObject ob = JsonParser.parseString(schema).getAsJsonObject();
         JsonElement fieldsObject = ob.get("fields");
         String guid = eventTypeMapper.createEgeriaEventType(ob, version, subject);
-        if (fieldsObject != null || fieldsObject.isJsonArray()) {
+        if (fieldsObject != null && fieldsObject.isJsonArray()) {
             JsonArray fields = fieldsObject.getAsJsonArray();
-            for (Iterator<JsonElement> it = fields.iterator(); it.hasNext(); ) {
-                JsonElement field = it.next();
+            for (JsonElement field : fields) {
                 if (field.isJsonObject()) {
                     schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
                     //TODO
