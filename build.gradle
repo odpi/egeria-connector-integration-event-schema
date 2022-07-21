@@ -17,7 +17,7 @@ if (System.getenv("CI")) {
 repositories {
     mavenCentral()
     maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
-    mavenLocal() // note - this may pick up modified classes from ~/.m2
+    maven { url("https://nexus.rz.bankenit.de/repository/maven2-internet-proxy/")}
 }
 
 // ensures we pick up the very latest snapshots when built
