@@ -1,5 +1,5 @@
 pipeline {
-//     agent {label 'jdk11'}
+    agent {label 'deployment-agent'}
 
     environment {
         LOG_LEVEL = 'INFO'
