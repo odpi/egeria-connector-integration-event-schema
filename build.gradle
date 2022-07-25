@@ -15,7 +15,6 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    mavenCentral()
     maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
     maven { url("https://nexus.rz.bankenit.de/repository/maven2-internet-proxy/")}
     dependencies {}
