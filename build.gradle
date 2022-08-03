@@ -3,6 +3,12 @@
  * Copyright Contributors to the ODPi Egeria project.
  */
 
+buildscript {
+    repositories {
+        maven { url "https://nexus.fiducia.de/nexus/content/repositories/central/" }
+    }
+}
+
 plugins {
     id 'java-library'
     id "com.github.johnrengelman.shadow" version "7.1.2"
@@ -15,9 +21,12 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
-    maven { url("https://nexus.rz.bankenit.de/repository/maven2-internet-proxy/")}
-    dependencies {}
+    maven {
+        url "https://nexus.fiducia.de/repository/maven2-internet-proxy/"
+    }
+    maven {
+        url "https://nexus.in.fiduciagad.de/repository/maven2-internet-proxy/"
+    }
 }
 
 // ensures we pick up the very latest snapshots when built
