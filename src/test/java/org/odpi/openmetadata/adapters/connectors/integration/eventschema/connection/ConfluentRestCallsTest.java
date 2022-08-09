@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfluentRestCallsTest {
 
-    private final ConfluentRestCalls confluentRestCalls = new ConfluentRestCalls("", "", "");
+    private final ConfluentRestCalls confluentRestCalls = new ConfluentRestCalls("");
 
     @Nested
     @DisplayName("Testcases for ConfluentRestCalls.convertResponseToStringArray with list of Strings")

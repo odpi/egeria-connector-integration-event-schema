@@ -84,4 +84,31 @@ public class SchemaAttributeMapperTest {
         assertFalse(child2.isNullable());
         assertEquals("Foo", child2.getDefault());
     }
+
+    @Test
+    void testMapEnumeration() {
+        assertNotNull(context);
+        final String json = "{\"name\":\"testEnum\",\"type\":{\"type\":\"enum\",\"name\":\"TestEnum\",\"doc\":\"Documentation of Enumeration.\",\"symbols\":[\"ONE\",\"TWO\",\"THREE\",\"FOUR\"]},\"doc\":\"Documentation of attribute\"}";
+        JsonObject ob = JsonParser.parseString(json).getAsJsonObject();
+        assertTrue(ob.isJsonObject());
+        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid");
+        assertEquals("testEnum", mapper.getName());
+        assertEquals("TestEnum", mapper.getType());
+        assertEquals("Documentation of attribute", mapper.getDoc());
+        assertNull(mapper.getDefault());
+        assertFalse(mapper.isNullable());
+        List<JsonObject> children = mapper.getChildren();
+        assertNotNull(children);
+        assertEquals(1, children.size());
+
+        mapper.map();
+        assertEquals(1, mapper.getChildSchemaAttributes().size());
+        SchemaAttributeMapper child1 = mapper.getChildSchemaAttributes().get(0);
+        assertTrue(child1.getChildren().isEmpty());
+        assertEquals("TestEnum", child1.getName());
+        assertEquals("enum", child1.getType());
+        assertEquals("Documentation of Enumeration.", child1.getDoc());
+        assertFalse(child1.isNullable());
+        assertNull(child1.getDefault());
+    }
 }

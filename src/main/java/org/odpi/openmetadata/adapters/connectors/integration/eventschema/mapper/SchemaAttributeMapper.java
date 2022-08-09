@@ -3,10 +3,14 @@ package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.odpi.openmetadata.accessservices.datamanager.properties.EnumSchemaTypeProperties;
+import org.odpi.openmetadata.accessservices.datamanager.properties.LiteralSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
+import org.odpi.openmetadata.frameworks.connectors.properties.beans.EnumSchemaType;
+import org.odpi.openmetadata.frameworks.connectors.properties.beans.LiteralSchemaType;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
 
 import java.util.ArrayList;
@@ -74,6 +78,9 @@ public class SchemaAttributeMapper {
         }
         if (jsObject.get(TYPE).isJsonObject()) {
             JsonObject typeObject = jsObject.getAsJsonObject(TYPE);
+            if (typeObject.has(NAME)) {
+                return typeObject.get(NAME).getAsString();
+            }
             if (typeObject.has(TYPE)) {
                 return typeObject.get(TYPE).getAsString();
             }
@@ -131,6 +138,9 @@ public class SchemaAttributeMapper {
             if (typeObject.has(FIELDS)) {
                 fields = typeObject.get(FIELDS);
             }
+            if (typeObject.has(TYPE) && typeObject.has(NAME)) {
+                children.add(typeObject);
+            }
         }
         if (fields != null && fields.isJsonArray()) {
             JsonArray fieldsObject = (JsonArray) fields;
@@ -155,6 +165,22 @@ public class SchemaAttributeMapper {
     public String createEgeriaSchemaAttribute() {
         try {
             guid = context.createSchemaAttribute(parentGUID, schemaAttributeProperties);
+        } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
+            e.printStackTrace();
+        }
+        return guid;
+    }
+
+    public String createEgeriaSchemaE() {
+        EnumSchemaTypeProperties enumSchemaTypeProperties = new EnumSchemaTypeProperties();
+        EnumSchemaType enumSchemaType;
+
+        LiteralSchemaTypeProperties literalSchemaTypeProperties = new LiteralSchemaTypeProperties();
+        LiteralSchemaType literalSchemaType;
+        try {
+            guid = context.createEnumSchemaType(enumSchemaTypeProperties, "");
+            String guid2 = context.createLiteralSchemaType(literalSchemaTypeProperties);
+//            context.s
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
             e.printStackTrace();
         }
