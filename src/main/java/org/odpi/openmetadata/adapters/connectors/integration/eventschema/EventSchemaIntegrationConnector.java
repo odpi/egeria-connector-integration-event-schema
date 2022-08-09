@@ -52,8 +52,6 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         subjectCache = new HashMap<>();
         //TODO: Initialise the cache with information from Egeria, iff possible
 
-        context = getContext();
-
         final String methodName = "start";
 
         if (connectionProperties != null) {
@@ -96,6 +94,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                     this.getClass().getName(),
                     methodName);
         }
+        context = getContext();
     }
 
 
