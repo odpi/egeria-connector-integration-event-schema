@@ -1,5 +1,7 @@
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.TopicElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
@@ -10,6 +12,7 @@ import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedExcepti
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EventTypeMapper {
 
@@ -22,7 +25,8 @@ public class EventTypeMapper {
 
     public String createEgeriaEventType(JsonObject jsEventType, String version, String subject) throws TopicNotFoundException {
         String name = jsEventType.get("name").getAsString();
-        String doc = jsEventType.get("doc").getAsString();
+//        String doc = jsEventType.get("doc").getAsString();
+        String doc = Optional.ofNullable(jsEventType.get("doc")).map(JsonElement::getAsString).orElse("");
         String namespace = jsEventType.get("namespace").getAsString();
         String type = jsEventType.get("type").getAsString();
         String qualifiedName = subject + SEPARATOR + namespace + SEPARATOR + name;
@@ -35,8 +39,7 @@ public class EventTypeMapper {
         eventProperties.setVersionNumber(version);
         String topicName = computeTopicName(jsEventType, version, subject);
         try {
-            String topicGUID = null;
-            topicGUID = getTopicGuid(topicName);
+            String topicGUID = getTopicGuid(topicName);
             return context.createEventType(topicGUID, eventProperties);
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e ) {
             e.printStackTrace();

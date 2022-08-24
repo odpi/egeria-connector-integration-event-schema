@@ -33,12 +33,16 @@ public enum EventSchemaIntegrationConnectorAuditCode implements AuditLogMessageS
             "The connector is designed to monitor changes to the topics managed by the event broker.",
             "No specific action is required.  This message is to confirm the configuration for the integration connector."),
 
-    NO_TOPIC_FOUND("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0002",
+    NO_TOPIC_FOUND("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0003",
             OMRSAuditLogRecordSeverity.INFO,
             "The {0} integration connector has tried to find a topic for schema {1}. No topic was found, so [1} is not imported into Egeria.",
             "Every EgeriaEventType needs a Topic to be persisted. If no topic is found, the schema can not be persisted.",
-            "No specific action is required.  This message is to confirm the configuration for the integration connector.")
-    ;
+            "No specific action is required. "),
+    UNABLE_TO_PARSE_SCHEMA("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0004",
+            OMRSAuditLogRecordSeverity.INFO,
+            "The {0} integration connector has tried to parse the schema of subject {1}. No JSON Object was found.",
+            "It may be that the JSON is an array of schemas. This is currently not supported. The subject will be skipped.",
+            "No specific action is required.  This message is to confirm the configuration for the integration connector.");
 
     private final String logMessageId;
     private final OMRSAuditLogRecordSeverity severity;

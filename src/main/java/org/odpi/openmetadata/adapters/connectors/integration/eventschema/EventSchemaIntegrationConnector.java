@@ -37,10 +37,11 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     protected ConnectionStrategy callDelegate;
     String targetURL = null;
 
-    @Override
-    public void setContext(TopicIntegratorContext context) {
-        this.context = context;
-    }
+//    @Override
+//    public void setContext(TopicIntegratorContext context) {
+//        super.setContext(context);
+//        this.context = context;
+//    }
 
     void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
         delegate = connectionStrategy;
@@ -54,6 +55,8 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
 
         final String methodName = "start";
 
+        context = this.getContext();
+
         if (connectionProperties != null) {
             EndpointProperties endpoint = connectionProperties.getEndpoint();
 
@@ -61,7 +64,8 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                 targetURL = endpoint.getAddress();
                 try {
                     new URI(targetURL);
-                    callDelegate = new ConfluentRestCalls(targetURL);
+//                    callDelegate = new ConfluentRestCalls(targetURL);
+                    delegate = new ConfluentRestCalls(targetURL);
                 } catch (URISyntaxException e) {
                     ExceptionMessageDefinition messageDefinition =
                             EventSchemaIntegrationConnectorErrorCode.INVALID_URL_IN_CONFIGURATION.getMessageDefinition(targetURL);
@@ -103,8 +107,9 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         getSchemaRegistryContent();
     }
 
-    protected void getSchemaRegistryContent() {
-        eventTypeMapper = new EventTypeMapper(context);
+    protected void getSchemaRegistryContent() throws ConnectorCheckedException {
+//        eventTypeMapper = new EventTypeMapper(context);
+        eventTypeMapper = new EventTypeMapper(this.getContext());
         List<String> subjects = delegate.listAllSubjects();
 
         for (String subject : subjects) {
@@ -130,7 +135,17 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     private void addSchema(String schema, String version, String subject) {
-        JsonObject ob = JsonParser.parseString(schema).getAsJsonObject();
+        //TODO: if schema is an array, this will throw an  IllegalStateExcpetion
+        JsonElement schemaTree = JsonParser.parseString(schema);
+        if( schemaTree.isJsonArray()) {
+            if (auditLog != null) {
+                auditLog.logMessage("addSchema",
+                        EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_PARSE_SCHEMA.getMessageDefinition(connectorName,
+                                subject));
+            }
+            return;
+        }
+        JsonObject ob =schemaTree.getAsJsonObject();
         JsonElement fieldsObject = ob.get("fields");
         String guid = null;
 
@@ -140,7 +155,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         } catch (TopicNotFoundException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
-                        EventSchemaIntegrationConnectorAuditCode.NO_CONNECTION_PROPERTIES.getMessageDefinition(connectorName,
+                        EventSchemaIntegrationConnectorAuditCode.NO_TOPIC_FOUND.getMessageDefinition(connectorName,
                                 subject));
             }
         }
