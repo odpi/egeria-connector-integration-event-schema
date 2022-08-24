@@ -35,7 +35,7 @@ public enum EventSchemaIntegrationConnectorAuditCode implements AuditLogMessageS
 
     NO_TOPIC_FOUND("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0003",
             OMRSAuditLogRecordSeverity.INFO,
-            "The {0} integration connector has tried to find a topic for schema {1}. No topic was found, so [1} is not imported into Egeria.",
+            "The {0} integration connector has tried to find a topic for schema {1}. No topic was found, so the schema is not imported into Egeria.",
             "Every EgeriaEventType needs a Topic to be persisted. If no topic is found, the schema can not be persisted.",
             "No specific action is required. "),
     UNABLE_TO_PARSE_SCHEMA("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0004",
