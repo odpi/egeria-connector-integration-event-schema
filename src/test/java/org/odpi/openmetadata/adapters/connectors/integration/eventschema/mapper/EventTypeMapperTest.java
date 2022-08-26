@@ -31,7 +31,8 @@ public class EventTypeMapperTest {
 
     @Test
     void testComputeTopicName() {
-        EventTypeMapper eventTypeMapper = new EventTypeMapper(null);
+
+        EventTypeMapper eventTypeMapper = new EventTypeMapper(context);
         String topicName = eventTypeMapper.computeTopicName(null, null,"ab.cd.ef-value");
         assertNotNull(topicName);
         assertEquals("ab.cd.ef", topicName);
@@ -54,16 +55,19 @@ public class EventTypeMapperTest {
 
     // Test should throw TopicNotFoundException
     @Test
-    void getTopicGuid() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+    void getTopicGuid() { //throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
         final String topicNameIn = "ab.cd.ef.value";
         eventTypeMapper = new EventTypeMapper(context);
 
-        when(context.getTopicsByName(topicNameIn, 1, 1))
-                .thenReturn(new ArrayList<TopicElement>());
+//        when(context.getTopicsByName(topicNameIn, 1, 1))
+//                .thenReturn(new ArrayList<TopicElement>());
+//        when(context.findTopics(topicNameIn.concat(".*"), 1, 0))
+//                .thenReturn(new ArrayList<TopicElement>());
 
         Assertions.assertThrows(TopicNotFoundException.class, () -> {
             String topicName;
             topicName = eventTypeMapper.getTopicGuid(topicNameIn);
+            Assertions.assertNotNull(topicName);
         });
 
     }

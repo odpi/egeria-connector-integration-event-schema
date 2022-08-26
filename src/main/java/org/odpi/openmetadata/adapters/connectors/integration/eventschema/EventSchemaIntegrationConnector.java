@@ -147,11 +147,20 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         }
         JsonObject ob =schemaTree.getAsJsonObject();
         JsonElement fieldsObject = ob.get("fields");
-        String guid = null;
+        String guid ;
 
-        //TODO: replace with audit log
         try {
             guid = eventTypeMapper.createEgeriaEventType(ob, version, subject);
+            if (fieldsObject != null && fieldsObject.isJsonArray()) {
+                JsonArray fields = fieldsObject.getAsJsonArray();
+                for (JsonElement field : fields) {
+                    if (field.isJsonObject()) {
+                        schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
+                        //TODO
+                        schemaAttributeMapper.mapEgeriaSchemaAttribute();
+                    }
+                }
+            }
         } catch (TopicNotFoundException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
@@ -159,17 +168,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                                 subject));
             }
         }
-        if (fieldsObject != null && fieldsObject.isJsonArray()) {
-            JsonArray fields = fieldsObject.getAsJsonArray();
-            for (JsonElement field : fields) {
-                if (field.isJsonObject()) {
-                    schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
-                    //TODO
-                    schemaAttributeMapper.mapEgeriaSchemaAttribute();
-                }
 
-            }
-        }
     }
 
 }
