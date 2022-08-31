@@ -3,6 +3,7 @@ package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.SchemaAttributeElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EnumSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.LiteralSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
@@ -89,7 +90,7 @@ public class SchemaAttributeMapper {
     }
 
     public String getDefault() {
-        if (jsObject.has(DEFAULT) && !jsObject.get(DEFAULT).isJsonNull()) {
+        if (jsObject.has(DEFAULT) && !jsObject.get(DEFAULT).isJsonNull() && !jsObject.get(DEFAULT).isJsonArray()) {
             return jsObject.get(DEFAULT).getAsString();
         }
         return null;
@@ -157,14 +158,22 @@ public class SchemaAttributeMapper {
     public void mapEgeriaSchemaAttribute() {
         schemaAttributeProperties.setDisplayName(getName());
         schemaAttributeProperties.setDescription(getDoc());
-        schemaAttributeProperties.setTypeName(getType());
+        schemaAttributeProperties.setTypeName("EventSchemaAttribute");
+        schemaAttributeProperties.setDataType(getType());
         schemaAttributeProperties.setDefaultValue(getDefault());
         schemaAttributeProperties.setIsNullable(isNullable());
+        schemaAttributeProperties.setQualifiedName(getName());
     }
 
     public String createEgeriaSchemaAttribute() {
         try {
-            guid = context.createSchemaAttribute(parentGUID, schemaAttributeProperties);
+            List<SchemaAttributeElement> existingSchemaAttribute = context.getSchemaAttributesByName(schemaAttributeProperties.getQualifiedName(), "SchemaAttribute", 0, 0);
+            if(existingSchemaAttribute == null || existingSchemaAttribute.isEmpty() ) {
+                guid = context.createSchemaAttribute(parentGUID, schemaAttributeProperties);
+            } else {
+                guid = existingSchemaAttribute.get(0).getElementHeader().getGUID();
+                context.updateSchemaAttribute(guid, true, schemaAttributeProperties);
+            }
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
             e.printStackTrace();
         }

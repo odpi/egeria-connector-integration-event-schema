@@ -38,6 +38,7 @@ public class EventSchemaIntegrationProvider extends ConnectorProviderBase {
         connectorType.setConnectorProviderClassName(this.getClass().getName());
 
         List<String> recognizedConfigurationProperties = new ArrayList<>();
+        recognizedConfigurationProperties.add("topicNamespace");
         connectorType.setRecognizedConfigurationProperties(recognizedConfigurationProperties);
 
         super.connectorTypeBean = connectorType;

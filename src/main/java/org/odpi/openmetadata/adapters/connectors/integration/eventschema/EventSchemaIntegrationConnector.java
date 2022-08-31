@@ -16,6 +16,9 @@ import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.SchemaAttributeMapper;
 import org.odpi.openmetadata.frameworks.auditlog.messagesets.ExceptionMessageDefinition;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.ConnectorCheckedException;
+import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
+import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
+import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
 import org.odpi.openmetadata.frameworks.connectors.properties.EndpointProperties;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorConnector;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
@@ -34,14 +37,13 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     protected TopicIntegratorContext context;
     protected EventTypeMapper eventTypeMapper;
     protected SchemaAttributeMapper schemaAttributeMapper;
-    protected ConnectionStrategy callDelegate;
     String targetURL = null;
 
-//    @Override
-//    public void setContext(TopicIntegratorContext context) {
-//        super.setContext(context);
-//        this.context = context;
-//    }
+    @Override
+    public void setContext(TopicIntegratorContext context) {
+        super.setContext(context);
+        this.context = context;
+    }
 
     void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
         delegate = connectionStrategy;
@@ -74,7 +76,6 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                             methodName);
                 }
             }
-            Map<String, Object> configurationProperties = connectionProperties.getConfigurationProperties();
             /*
              * Record the configuration
              */
@@ -108,8 +109,15 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     protected void getSchemaRegistryContent() throws ConnectorCheckedException {
-//        eventTypeMapper = new EventTypeMapper(context);
-        eventTypeMapper = new EventTypeMapper(this.getContext());
+        if(connectionProperties != null && connectionProperties.getConfigurationProperties() != null && connectionProperties.getConfigurationProperties().containsKey("topicNamespace")) {
+            eventTypeMapper = new EventTypeMapper(
+                    this.getContext(),
+                    connectionProperties.getConfigurationProperties().get("topicNamespace").toString()
+            );
+        } else {
+            eventTypeMapper = new EventTypeMapper(this.getContext());
+        }
+
         List<String> subjects = delegate.listAllSubjects();
 
         for (String subject : subjects) {
@@ -157,7 +165,8 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                     if (field.isJsonObject()) {
                         schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
                         //TODO
-                        schemaAttributeMapper.mapEgeriaSchemaAttribute();
+//                        schemaAttributeMapper.mapEgeriaSchemaAttribute();
+                        schemaAttributeMapper.map();
                     }
                 }
             }
@@ -165,6 +174,12 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
                         EventSchemaIntegrationConnectorAuditCode.NO_TOPIC_FOUND.getMessageDefinition(connectorName,
+                                subject));
+            }
+        } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException e) {
+            if (auditLog != null) {
+                auditLog.logMessage("addSchema",
+                        EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_PARSE_SCHEMA.getMessageDefinition(connectorName,
                                 subject));
             }
         }

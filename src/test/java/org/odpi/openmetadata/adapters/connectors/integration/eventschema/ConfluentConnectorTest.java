@@ -76,36 +76,28 @@ public class ConfluentConnectorTest {
     @Test
     void testRefresh() throws ConnectorCheckedException, InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
         assertNotNull(context);
-//        when(context.getTopicsByName("test.subject", 1, 1))
-//                .thenReturn(createTopic("guid.test.subject"));
-//        when(context.getTopicsByName("test.subject2", 1, 1))
-//                .thenReturn(createTopic("guid.test.subject2"));
-//        when(context.findTopics("test.subject.*", 1, 1))
-//                .thenReturn(createTopic("guid.test.subject"));
-//        when(context.findTopics("test.subject2.*", 1, 1))
-//                .thenReturn(createTopic("guid.test.subject2"));
-        when(context.findTopics(".*", 1, 0))
-                .thenReturn(createTopic("guid.test.subject3"));
+        when(context.getTopicsByName("test.subject", 0, 1))
+                .thenReturn(createTopic("guid.test.subject"));
+        when(context.getTopicsByName("test.subject2", 0, 1))
+                .thenReturn(createTopic("guid.test.subject2"));
         connector.refresh();
         EventTypeProperties eventProperties = new EventTypeProperties();
         eventProperties.setDisplayName("testValue");
-        eventProperties.setQualifiedName("test.subject.org.egeria.test.testValue");
+        eventProperties.setQualifiedName("test.subject~org.egeria.test~testValue~1");
         eventProperties.setDescription("A test subject.");
         eventProperties.setNamespace("org.egeria.test");
-        eventProperties.setTypeName("record");
+//        eventProperties.setTypeName("record");
         eventProperties.setVersionNumber("1");
-//        verify(context).getTopicsByName("test.subject", 1,1);
-//        verify(context).findTopics("test.subject.*", 1,1);
-//        verify(context).createEventType("guid.test.subject", eventProperties);
+        verify(context).getTopicsByName("test.subject", 0,1);
+        verify(context).createEventType("guid.test.subject", eventProperties);
         eventProperties.setDisplayName("testKey");
-        eventProperties.setQualifiedName("test.subject2.org.egeria.test2.testKey");
+        eventProperties.setQualifiedName("test.subject2~org.egeria.test2~testKey~1");
         eventProperties.setDescription("A test subject.");
         eventProperties.setNamespace("org.egeria.test2");
-        eventProperties.setTypeName("record");
+//        eventProperties.setTypeName("record");
         eventProperties.setVersionNumber("1");
-//        verify(context).getTopicsByName("test.subject2", 1,1);
-//        verify(context).findTopics("test.subject2.*", 1,1);
-//        verify(context).createEventType("guid.test.subject2", eventProperties);
+        verify(context).getTopicsByName("test.subject2", 0,1);
+        verify(context).createEventType("guid.test.subject2", eventProperties);
     }
 
     public List<TopicElement> createTopic(String guid) {
