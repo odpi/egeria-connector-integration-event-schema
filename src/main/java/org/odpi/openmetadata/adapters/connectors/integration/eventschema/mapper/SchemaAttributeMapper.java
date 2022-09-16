@@ -3,6 +3,7 @@ package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.SchemaAttributeElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EnumSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.LiteralSchemaTypeProperties;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class SchemaAttributeMapper {
 
+    public static final String SEPARATOR = "~";
     public static final String TYPE = "type";
     public static final String DEFAULT = "default";
     public static final String NAME = "name";
@@ -139,9 +141,9 @@ public class SchemaAttributeMapper {
             if (typeObject.has(FIELDS)) {
                 fields = typeObject.get(FIELDS);
             }
-            if (typeObject.has(TYPE) && typeObject.has(NAME)) {
-                children.add(typeObject);
-            }
+//            if (typeObject.has(TYPE) && typeObject.has(NAME)) {
+//                children.add(typeObject);
+//            }
         }
         if (fields != null && fields.isJsonArray()) {
             JsonArray fieldsObject = (JsonArray) fields;
@@ -155,15 +157,33 @@ public class SchemaAttributeMapper {
         return children;
     }
 
-    public void mapEgeriaSchemaAttribute() {
+    public void mapEgeriaSchemaAttribute() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+        String parentQualifiedName = getParentQualifiedName();
         schemaAttributeProperties.setDisplayName(getName());
         schemaAttributeProperties.setDescription(getDoc());
         schemaAttributeProperties.setTypeName("EventSchemaAttribute");
         schemaAttributeProperties.setDataType(getType());
         schemaAttributeProperties.setDefaultValue(getDefault());
         schemaAttributeProperties.setIsNullable(isNullable());
-        schemaAttributeProperties.setQualifiedName(getName());
+        schemaAttributeProperties.setQualifiedName(parentQualifiedName.concat(SEPARATOR).concat(getName()));
     }
+
+    /**
+     * Get the qualifiedName of the parent SchemaType. This can either be a SchemaAttribute or an
+     *
+     * @return the qualifiedName of the parent or an empty String
+     */
+    private String getParentQualifiedName() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+        EventTypeElement et;
+        SchemaAttributeElement attr;
+        try {
+           et = context.getEventTypeByGUID(parentGUID);
+           return et.getProperties().getQualifiedName();
+        } catch( PropertyServerException e) {
+            attr = context.getSchemaAttributeByGUID(parentGUID);
+            return attr.getProperties().getQualifiedName();
+        }
+   }
 
     public String createEgeriaSchemaAttribute() {
         try {
@@ -175,6 +195,7 @@ public class SchemaAttributeMapper {
                 context.updateSchemaAttribute(guid, true, schemaAttributeProperties);
             }
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
+            //TODO: Audit log
             e.printStackTrace();
         }
         return guid;
@@ -189,14 +210,13 @@ public class SchemaAttributeMapper {
         try {
             guid = context.createEnumSchemaType(enumSchemaTypeProperties, "");
             String guid2 = context.createLiteralSchemaType(literalSchemaTypeProperties);
-//            context.s
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
             e.printStackTrace();
         }
         return guid;
     }
 
-    public void map() {
+    public void map() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
         mapEgeriaSchemaAttribute();
         String guid = createEgeriaSchemaAttribute();
         for (JsonObject json : getChildren()) {

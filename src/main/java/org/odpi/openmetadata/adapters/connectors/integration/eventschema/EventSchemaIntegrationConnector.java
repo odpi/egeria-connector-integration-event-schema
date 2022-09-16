@@ -164,8 +164,6 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                 for (JsonElement field : fields) {
                     if (field.isJsonObject()) {
                         schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
-                        //TODO
-//                        schemaAttributeMapper.mapEgeriaSchemaAttribute();
                         schemaAttributeMapper.map();
                     }
                 }
@@ -179,7 +177,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
-                        EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_PARSE_SCHEMA.getMessageDefinition(connectorName,
+                        EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_MAP_SCHEMA.getMessageDefinition(connectorName,
                                 subject));
             }
         }

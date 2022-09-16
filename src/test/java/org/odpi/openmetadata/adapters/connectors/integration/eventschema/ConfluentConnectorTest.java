@@ -7,8 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.ElementHeader;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.TopicElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
+import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.TopicProperties;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.ConnectorCheckedException;
@@ -21,8 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ConfluentConnectorTest {
@@ -63,6 +64,12 @@ public class ConfluentConnectorTest {
     @Mock
     TopicIntegratorContext context;
 
+    @Mock
+    EventTypeProperties ep;
+
+    @Mock
+    EventTypeElement et;
+
     @InjectMocks
     private EventSchemaIntegrationConnector connector;
 
@@ -80,6 +87,16 @@ public class ConfluentConnectorTest {
                 .thenReturn(createTopic("guid.test.subject"));
         when(context.getTopicsByName("test.subject2", 0, 1))
                 .thenReturn(createTopic("guid.test.subject2"));
+        when( ep.getQualifiedName())
+                .thenReturn("testQualifiedName");
+        when(et.getProperties())
+                .thenReturn(ep);
+        when(context.getEventTypeByGUID(anyString()))
+                .thenReturn(et);
+        when(context.createSchemaAttribute(anyString(), any(SchemaAttributeProperties.class)))
+                .thenReturn("guid");
+        when(context.createEventType(anyString(), any(EventTypeProperties.class)))
+                .thenReturn("guid");
         connector.refresh();
         EventTypeProperties eventProperties = new EventTypeProperties();
         eventProperties.setDisplayName("testValue");

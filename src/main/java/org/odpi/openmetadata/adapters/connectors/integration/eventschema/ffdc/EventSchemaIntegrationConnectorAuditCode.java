@@ -39,10 +39,17 @@ public enum EventSchemaIntegrationConnectorAuditCode implements AuditLogMessageS
             "Every EgeriaEventType needs a Topic to be persisted. If no topic is found, the schema can not be persisted.",
             "No specific action is required. "),
     UNABLE_TO_PARSE_SCHEMA("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0004",
-            OMRSAuditLogRecordSeverity.INFO,
+            OMRSAuditLogRecordSeverity.EXCEPTION,
             "The {0} integration connector has tried to parse the schema of subject {1}. No JSON Object was found.",
             "It may be that the JSON is an array of schemas. This is currently not supported. The subject will be skipped.",
-            "No specific action is required.  This message is to confirm the configuration for the integration connector.");
+            "No specific action is required.  This message is to confirm the configuration for the integration connector."),
+    UNABLE_TO_MAP_SCHEMA("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0005",
+            OMRSAuditLogRecordSeverity.EXCEPTION,
+            "The {0} integration connector was unable to map the schema of subject {1}.",
+            "Either the parent of the schema is not available or the user is not authorized.",
+            "Ensure that all Topics have been inserted into Egeria before inserting EventTypes. " +
+                    "Ensure that the user has access to all relevant Topics and EventTypes")
+    ;
 
     private final String logMessageId;
     private final OMRSAuditLogRecordSeverity severity;

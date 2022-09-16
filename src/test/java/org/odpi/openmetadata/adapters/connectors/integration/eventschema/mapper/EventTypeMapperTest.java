@@ -1,22 +1,13 @@
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper;
 
-import static org.mockito.Mockito.*;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.odpi.openmetadata.accessservices.datamanager.metadataelements.TopicElement;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.TopicNotFoundException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
