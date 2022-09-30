@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.SchemaAttributeElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
@@ -29,9 +30,12 @@ public class SchemaAttributeMapperTest {
 
     @Mock
     EventTypeElement et;
-
     @Mock
     EventTypeProperties ep;
+    @Mock
+    SchemaAttributeElement at;
+    @Mock
+    SchemaAttributeProperties ap;
 
     @Test
     void testMap() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
@@ -45,7 +49,7 @@ public class SchemaAttributeMapperTest {
         String json = "{ \"name\": \"Id\", \"type\": \"string\", \"doc\": \"Unique customer ID.\" , \"default\": \"bla\"}";
         JsonObject ob = JsonParser.parseString(json).getAsJsonObject();
         assertTrue(ob.isJsonObject());
-        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid");
+        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid", EventTypeElement.class.getName());
         mapper.mapEgeriaSchemaAttribute();
         assertEquals("Id", mapper.getName());
         assertEquals("string", mapper.getType());
@@ -54,7 +58,7 @@ public class SchemaAttributeMapperTest {
         json = "{ \"name\": \"Id\", \"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"} , \"default\": null}";
         ob = JsonParser.parseString(json).getAsJsonObject();
         assertTrue(ob.isJsonObject());
-        mapper = new SchemaAttributeMapper(context, ob, "guid");
+        mapper = new SchemaAttributeMapper(context, ob, "guid", EventTypeElement.class.getName());
         mapper.mapEgeriaSchemaAttribute();
         assertEquals("Id", mapper.getName());
         assertEquals("string", mapper.getType());
@@ -64,7 +68,7 @@ public class SchemaAttributeMapperTest {
         json = "{ \"name\": \"Id\", \"type\":[\"null\", {\"type\":\"string\",\"avro.java.string\":\"String\"}]}";
         ob = JsonParser.parseString(json).getAsJsonObject();
         assertTrue(ob.isJsonObject());
-        mapper = new SchemaAttributeMapper(context, ob, "guid");
+        mapper = new SchemaAttributeMapper(context, ob, "guid", EventTypeElement.class.getName());
         mapper.mapEgeriaSchemaAttribute();
         assertEquals("Id", mapper.getName());
         assertEquals("string", mapper.getType());
@@ -84,10 +88,16 @@ public class SchemaAttributeMapperTest {
                 .thenReturn(ep);
         when(context.getEventTypeByGUID(anyString()))
                 .thenReturn(et);
+        when( ap.getQualifiedName())
+                .thenReturn("testQualifiedName");
+        when(at.getProperties())
+                .thenReturn(ap);
+        when(context.getSchemaAttributeByGUID(anyString()))
+                .thenReturn(at);
         final String json = "{\"name\":\"accountReferenceIban\",\"type\":[\"null\",{\"type\":\"record\",\"name\":\"AccountReferenceIban\",\"fields\":[{\"name\":\"iban\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}],\"default\":null},{\"name\":\"currency\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"Foo\"}]}],\"default\":null}";
         JsonObject ob = JsonParser.parseString(json).getAsJsonObject();
         assertTrue(ob.isJsonObject());
-        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid");
+        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid", EventTypeElement.class.getName());
         assertEquals("accountReferenceIban", mapper.getName());
         assertEquals("AccountReferenceIban", mapper.getType());
         assertNull(mapper.getDoc());
@@ -128,7 +138,7 @@ public class SchemaAttributeMapperTest {
         final String json = "{\"name\":\"testEnum\",\"type\":{\"type\":\"enum\",\"name\":\"TestEnum\",\"doc\":\"Documentation of Enumeration.\",\"symbols\":[\"ONE\",\"TWO\",\"THREE\",\"FOUR\"]},\"doc\":\"Documentation of attribute\"}";
         JsonObject ob = JsonParser.parseString(json).getAsJsonObject();
         assertTrue(ob.isJsonObject());
-        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid");
+        SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, ob, "guid", EventTypeElement.class.getName());
         assertEquals("testEnum", mapper.getName());
         assertEquals("TestEnum", mapper.getType());
         assertEquals("Documentation of attribute", mapper.getDoc());

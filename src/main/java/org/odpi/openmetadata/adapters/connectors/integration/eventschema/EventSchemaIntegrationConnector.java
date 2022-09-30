@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConfluentRestCalls;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.TopicNotFoundException;
@@ -163,7 +164,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                 JsonArray fields = fieldsObject.getAsJsonArray();
                 for (JsonElement field : fields) {
                     if (field.isJsonObject()) {
-                        schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
+                        schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid, EventTypeElement.class.getName());
                         schemaAttributeMapper.map();
                     }
                 }
