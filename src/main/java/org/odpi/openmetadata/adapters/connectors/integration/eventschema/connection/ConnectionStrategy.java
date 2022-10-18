@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright © 2021 Atruvia AG <opensource@atruvia.de> as contributor to the ODPi Egeria project. */
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection;
 
 import java.util.List;
