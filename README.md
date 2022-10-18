@@ -8,7 +8,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.odpi.egeria/egeria)](https://mvnrepository.com/artifact/org.odpi.egeria)
 
 
-# Egeria integration connector for Strimzi Topics
+# Egeria integration connector for Event Schemas
 
 This project contains the Egeria integration connector for event schemas which are read from a Schema Registry - e. g. Confluent&trade; Schema Registry. It uses API-calls to retrieve 
 schema definitions for all subjects in all versions. The connector tries to match
@@ -21,6 +21,9 @@ relationship.
 
 
 [//]: # (This integration connector needs to be configured. The following steps can be performed using the postman collection to set this connector up.)
+
+## Known Limitations
+* Currently only Avro Schemas are supported. 
 
 
 ## For testing
