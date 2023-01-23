@@ -1,3 +1,6 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright Contributors to the ODPi Egeria project. */
+
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper;
 
 import com.google.gson.JsonObject;
@@ -10,6 +13,7 @@ import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTy
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.SchemaAttributeElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.UnableToCreateSchemaAttributeException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
@@ -78,7 +82,7 @@ public class SchemaAttributeMapperTest {
     }
 
     @Test
-    void testMapComplex() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+    void testMapComplex() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException, UnableToCreateSchemaAttributeException {
         assertNotNull(context);
         when(context.createSchemaAttribute(anyString(), any(SchemaAttributeProperties.class)))
                 .thenReturn("anyGuid");
@@ -125,7 +129,7 @@ public class SchemaAttributeMapperTest {
     }
 
     @Test
-    void testMapEnumeration() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+    void testMapEnumeration() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException, UnableToCreateSchemaAttributeException {
         when(context.createSchemaAttribute(anyString(), any(SchemaAttributeProperties.class)))
                 .thenReturn("anyGuid");
         when( ep.getQualifiedName())
@@ -149,13 +153,6 @@ public class SchemaAttributeMapperTest {
         assertEquals(0, children.size());
 
         mapper.map();
-//        assertEquals(0, mapper.getChildSchemaAttributes().size());
-//        SchemaAttributeMapper child1 = mapper.getChildSchemaAttributes().get(0);
-//        assertTrue(child1.getChildren().isEmpty());
-//        assertEquals("TestEnum", child1.getName());
-//        assertEquals("enum", child1.getType());
-//        assertEquals("Documentation of Enumeration.", child1.getDoc());
-//        assertFalse(child1.isNullable());
-//        assertNull(child1.getDefault());
+
     }
 }

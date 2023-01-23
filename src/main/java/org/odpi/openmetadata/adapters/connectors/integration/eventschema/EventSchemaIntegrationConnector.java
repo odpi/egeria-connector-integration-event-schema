@@ -11,6 +11,7 @@ import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTy
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConfluentRestCalls;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.TopicNotFoundException;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.UnableToCreateSchemaAttributeException;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.ffdc.EventSchemaIntegrationConnectorAuditCode;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.ffdc.EventSchemaIntegrationConnectorErrorCode;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.EventTypeMapper;
@@ -41,7 +42,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     String targetURL = null;
 
     @Override
-    public void setContext(TopicIntegratorContext context) {
+    public synchronized void setContext(TopicIntegratorContext context) {
         super.setContext(context);
         this.context = context;
     }
@@ -51,10 +52,10 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     @Override
-    public void start() throws ConnectorCheckedException {
+    public synchronized void start() throws ConnectorCheckedException {
         super.start();
         subjectCache = new HashMap<>();
-        //TODO: Initialise the cache with information from Egeria, iff possible
+        //TODO: Initialise the cache with information from Egeria, if possible
 
         final String methodName = "start";
 
@@ -144,7 +145,6 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     private void addSchema(String schema, String version, String subject) {
-        //TODO: if schema is an array, this will throw an  IllegalStateExcpetion
         JsonElement schemaTree = JsonParser.parseString(schema);
         if( schemaTree.isJsonArray()) {
             if (auditLog != null) {
@@ -175,14 +175,13 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                         EventSchemaIntegrationConnectorAuditCode.NO_TOPIC_FOUND.getMessageDefinition(connectorName,
                                 subject));
             }
-        } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException e) {
+        } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException | UnableToCreateSchemaAttributeException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
                         EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_MAP_SCHEMA.getMessageDefinition(connectorName,
                                 subject));
             }
         }
-
     }
 
 }
