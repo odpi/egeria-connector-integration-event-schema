@@ -1,5 +1,5 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
-<!-- Copyright Contributors to the ODPi Egeria project. -->
+<!-- Copyright Contributors to the Egeria project. -->
 
 # Code of Conduct
 
@@ -90,4 +90,4 @@ This code is based on the [Hyperledger Project](https://github.com/hyperledger/h
 
 ----
 License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
-Copyright Contributors to the ODPi Egeria project.
+Copyright Contributors to the  Egeria project.
