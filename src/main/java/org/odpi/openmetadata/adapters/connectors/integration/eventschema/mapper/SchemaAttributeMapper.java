@@ -1,5 +1,6 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright © 2021 Atruvia AG <opensource@atruvia.de> as contributor to the ODPi Egeria project. */
+/* Copyright Contributors to the ODPi Egeria project. */
+
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper;
 
 import com.google.gson.JsonArray;
@@ -10,6 +11,7 @@ import org.odpi.openmetadata.accessservices.datamanager.metadataelements.SchemaA
 import org.odpi.openmetadata.accessservices.datamanager.properties.EnumSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.LiteralSchemaTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.UnableToCreateSchemaAttributeException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
@@ -19,6 +21,7 @@ import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegrator
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SchemaAttributeMapper {
 
@@ -31,6 +34,8 @@ public class SchemaAttributeMapper {
     final TopicIntegratorContext context;
     final JsonObject jsObject;
     final String parentGUID;
+
+    final String parentClass;
     final SchemaAttributeProperties schemaAttributeProperties = new SchemaAttributeProperties();
     String guid = null;
 
@@ -40,10 +45,11 @@ public class SchemaAttributeMapper {
 
     List<SchemaAttributeMapper> childSchemaAttributes = new ArrayList<>();
 
-    public SchemaAttributeMapper(TopicIntegratorContext context, JsonObject jsObject, String parentGUID) {
+    public SchemaAttributeMapper(TopicIntegratorContext context, JsonObject jsObject, String parentGUID, String parentClass) {
         this.context = context;
         this.jsObject = jsObject;
         this.parentGUID = parentGUID;
+        this.parentClass = parentClass;
     }
 
     public String getName() {
@@ -178,16 +184,17 @@ public class SchemaAttributeMapper {
     private String getParentQualifiedName() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
         EventTypeElement et;
         SchemaAttributeElement attr;
-        try {
-           et = context.getEventTypeByGUID(parentGUID);
-           return et.getProperties().getQualifiedName();
-        } catch( PropertyServerException e) {
+        if(Objects.equals(this.parentClass, EventTypeElement.class.getName())) {
+            et = context.getEventTypeByGUID(parentGUID);
+            return et.getProperties().getQualifiedName();
+        }
+        else {
             attr = context.getSchemaAttributeByGUID(parentGUID);
             return attr.getProperties().getQualifiedName();
         }
    }
 
-    public String createEgeriaSchemaAttribute() {
+    public String createEgeriaSchemaAttribute() throws UnableToCreateSchemaAttributeException {
         try {
             List<SchemaAttributeElement> existingSchemaAttribute = context.getSchemaAttributesByName(schemaAttributeProperties.getQualifiedName(), "SchemaAttribute", 0, 0);
             if(existingSchemaAttribute == null || existingSchemaAttribute.isEmpty() ) {
@@ -197,13 +204,12 @@ public class SchemaAttributeMapper {
                 context.updateSchemaAttribute(guid, true, schemaAttributeProperties);
             }
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
-            //TODO: Audit log
-            e.printStackTrace();
+            throw new UnableToCreateSchemaAttributeException();
         }
         return guid;
     }
 
-    public String createEgeriaSchemaE() {
+    public String createEgeriaSchemaE() throws UnableToCreateSchemaAttributeException {
         EnumSchemaTypeProperties enumSchemaTypeProperties = new EnumSchemaTypeProperties();
         EnumSchemaType enumSchemaType;
 
@@ -213,16 +219,16 @@ public class SchemaAttributeMapper {
             guid = context.createEnumSchemaType(enumSchemaTypeProperties, "");
             String guid2 = context.createLiteralSchemaType(literalSchemaTypeProperties);
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
-            e.printStackTrace();
+            throw new UnableToCreateSchemaAttributeException();
         }
         return guid;
     }
 
-    public void map() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException {
+    public void map() throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException, UnableToCreateSchemaAttributeException {
         mapEgeriaSchemaAttribute();
         String guid = createEgeriaSchemaAttribute();
         for (JsonObject json : getChildren()) {
-            SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, json, guid);
+            SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, json, guid, SchemaAttributeElement.class.getName());
             mapper.map();
             childSchemaAttributes.add(mapper);
         }
