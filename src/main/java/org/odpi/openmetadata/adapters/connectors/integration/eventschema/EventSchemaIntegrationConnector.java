@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright © 2021 Atruvia AG <opensource@atruvia.de> as contributor to the ODPi Egeria project. */
+/* Copyright Contributors to the ODPi Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
@@ -7,9 +7,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConfluentRestCalls;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.TopicNotFoundException;
+import org.odpi.openmetadata.adapters.connectors.integration.eventschema.exception.UnableToCreateSchemaAttributeException;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.ffdc.EventSchemaIntegrationConnectorAuditCode;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.ffdc.EventSchemaIntegrationConnectorErrorCode;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper.EventTypeMapper;
@@ -143,7 +145,6 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     private void addSchema(String schema, String version, String subject) {
-        //TODO: if schema is an array, this will throw an  IllegalStateExcpetion
         JsonElement schemaTree = JsonParser.parseString(schema);
         if( schemaTree.isJsonArray()) {
             if (auditLog != null) {
@@ -163,7 +164,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                 JsonArray fields = fieldsObject.getAsJsonArray();
                 for (JsonElement field : fields) {
                     if (field.isJsonObject()) {
-                        schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid);
+                        schemaAttributeMapper = new SchemaAttributeMapper(context, (JsonObject) field, guid, EventTypeElement.class.getName());
                         schemaAttributeMapper.map();
                     }
                 }
@@ -174,14 +175,13 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                         EventSchemaIntegrationConnectorAuditCode.NO_TOPIC_FOUND.getMessageDefinition(connectorName,
                                 subject));
             }
-        } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException e) {
+        } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException | UnableToCreateSchemaAttributeException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
                         EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_MAP_SCHEMA.getMessageDefinition(connectorName,
                                 subject));
             }
         }
-
     }
 
 }
