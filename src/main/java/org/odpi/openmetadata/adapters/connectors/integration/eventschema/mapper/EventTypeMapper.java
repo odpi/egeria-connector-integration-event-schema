@@ -60,18 +60,13 @@ public class EventTypeMapper {
     }
 
     protected String getTopicGuid(String topicName) throws InvalidParameterException, PropertyServerException, UserNotAuthorizedException, TopicNotFoundException {
-        //TODO: What to do if no topic is found?
         //Maybe we should use another egeria type?
         // see above. get the GUID from the map which we initialize in the constructor
         List<TopicElement> topicsByName = context.getTopicsByName(topicName, 0, 1);
-//        List<TopicElement> topicsByName = context.findTopics(topicName.concat(".*"), 1, 1);
         if (topicsByName != null && !topicsByName.isEmpty()) {
             return topicsByName.get(0).getElementHeader().getGUID();
 
         }
-//        if( this.topicMap.containsKey(topicName) ) {
-//            return topicMap.get(topicName);
-//        }
         else {
             throw new TopicNotFoundException(topicName);
         }
