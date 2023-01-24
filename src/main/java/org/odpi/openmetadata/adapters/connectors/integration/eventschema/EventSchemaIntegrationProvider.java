@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright © 2021 Atruvia AG <opensource@atruvia.de> as contributor to the ODPi Egeria project. */
+/* Copyright Contributors to the ODPi Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
@@ -15,8 +15,6 @@ import java.util.List;
  */
 public class EventSchemaIntegrationProvider extends ConnectorProviderBase {
 
-    public static final String EVENT_SCHEMA_USER_ID = "event_schema_user_id";
-    public static final String EVENT_SCHEMA_PASSWORD = "event_schema_user_password";
     private static final String connectorTypeGUID = "d64cbdb1-69bf-4da1-93cc-a8ba99b41428";
     private static final String connectorTypeQualifiedName = "Event Schema Integration Connector";
     private static final String connectorTypeDisplayName = "Event Schema Integration Connector";
@@ -40,9 +38,7 @@ public class EventSchemaIntegrationProvider extends ConnectorProviderBase {
         connectorType.setConnectorProviderClassName(this.getClass().getName());
 
         List<String> recognizedConfigurationProperties = new ArrayList<>();
-        recognizedConfigurationProperties.add(EVENT_SCHEMA_USER_ID);
-        recognizedConfigurationProperties.add(EVENT_SCHEMA_PASSWORD);
-
+        recognizedConfigurationProperties.add("topicNamespace");
         connectorType.setRecognizedConfigurationProperties(recognizedConfigurationProperties);
 
         super.connectorTypeBean = connectorType;

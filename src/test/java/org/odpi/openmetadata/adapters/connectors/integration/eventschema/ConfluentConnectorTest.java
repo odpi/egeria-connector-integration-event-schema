@@ -1,5 +1,3 @@
-/* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright © 2021 Atruvia AG <opensource@atruvia.de> as contributor to the ODPi Egeria project. */
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.odpi.openmetadata.accessservices.datamanager.metadataelements.ElementHeader;
+import org.odpi.openmetadata.frameworks.connectors.properties.beans.ElementHeader;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.TopicElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
