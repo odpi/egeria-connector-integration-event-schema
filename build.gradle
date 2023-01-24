@@ -39,6 +39,7 @@ ext {
     jacksonVersion = '2.13.2'
     jupiterVersion = '5.9.1'
     httpclientVersion = '4.5.13'
+    mockitoVersion ='4.5.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
@@ -50,11 +51,14 @@ dependencies {
 
     // Needed for build and run
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     // Only needed to compile test code
     testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
 
 }
 
