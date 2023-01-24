@@ -34,11 +34,12 @@ description = 'New code for Egeria'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.6'
+    egeriaversion = '3.10'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.13.2'
     jupiterVersion = '5.9.1'
     httpclientVersion = '4.5.13'
+    mockitoVersion ='4.5.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
@@ -50,11 +51,14 @@ dependencies {
 
     // Needed for build and run
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     // Only needed to compile test code
     testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
 
 }
 
@@ -130,16 +134,15 @@ publishing {
                 }
                 developers {
                     developer {
-                        id = 'planetf1'
-                        name = 'Nigel Jones'
-                        email = 'nigel.l.jones+git@gmail.com'
+                        id = 'juergenhemelt'
+                        name = 'Juergen Hemelt'
+                        email = 'juergen.hemelt@atruvia.de'
                     }
                 }
                 scm {
-                    // TODO: Update references to git source for this particular repository
-                    connection = 'scm:git:git://github.com/odpi/egeria-template-newrepo.git'
-                    developerConnection = 'scm:git:ssh://github.com/odpi/egeria/egeria-template-newrepo.git'
-                    url = 'http://github.com/odpi/egeria-template-newrepo/'
+                    connection = 'scm:git:git://github.com/odpi/egeria-connection-integration-event-schema.git'
+                    developerConnection = 'scm:git:ssh://github.com/odpi/egeria-connection-integration-event-schema.git'
+                    url = 'http://github.com/odpi/egeria-connection-integration-event-schema/'
                 }
             }
             // Override the project name & description for the pom based on properties set in the child build.gradle (hard to default & required for maven central)
