@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * This class implements the connection to a real Atlas System
  */
+@SuppressWarnings("Var")
 public class ConfluentRestCalls implements ConnectionStrategy {
 
     /*

@@ -24,6 +24,7 @@ import org.odpi.openmetadata.frameworks.auditlog.messagesets.ExceptionMessageSet
  *     <li>UserAction - describes how a consumer should correct the error</li>
  * </ul>
  */
+@SuppressWarnings("ImmutableEnumChecker")
 public enum EventSchemaIntegrationConnectorErrorCode implements ExceptionMessageSet {
 
     INVALID_URL_IN_CONFIGURATION(400, "EVENT-SCHEMA-INTEGRATION-CONNECTOR-400-001",

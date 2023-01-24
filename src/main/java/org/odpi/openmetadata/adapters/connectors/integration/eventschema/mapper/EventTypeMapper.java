@@ -17,6 +17,7 @@ import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegrator
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("Var")
 public class EventTypeMapper {
 
     TopicIntegratorContext context;

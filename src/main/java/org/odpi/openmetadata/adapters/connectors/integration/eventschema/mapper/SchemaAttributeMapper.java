@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("Var")
 public class SchemaAttributeMapper {
 
     public static final String SEPARATOR = "~";
