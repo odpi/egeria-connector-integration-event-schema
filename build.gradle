@@ -3,6 +3,12 @@
  * Copyright Contributors to the ODPi Egeria project.
  */
 
+buildscript {
+    repositories {
+        maven { url mavenUrl }
+    }
+}
+
 plugins {
     id 'java-library'
     id "com.github.johnrengelman.shadow" version "7.1.2"
@@ -15,9 +21,9 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    mavenCentral()
-    maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
-    mavenLocal() // note - this may pick up modified classes from ~/.m2
+    maven {
+        url mavenUrl
+    }
 }
 
 // ensures we pick up the very latest snapshots when built
@@ -29,16 +35,17 @@ configurations.all {
 // TODO: Specify group, name, description, version of new code being built
 group = 'org.odpi.egeria'
 version = '1.0-SNAPSHOT'
-ext.name = 'New Egeria code'
-description = 'New code for Egeria'
+ext.name = 'egeria-connector-integration-event-schema'
+description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.6'
+    egeriaversion = '3.14'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.13.2'
     jupiterVersion = '5.9.1'
     httpclientVersion = '4.5.13'
+    mockitoVersion ='4.5.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
@@ -50,11 +57,14 @@ dependencies {
 
     // Needed for build and run
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation 'com.google.code.gson:gson:2.9.0'
 
     // Only needed to compile test code
     testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
 
 }
 
