@@ -13,4 +13,6 @@
 gradle* @planetf1
 gradle/ @planetf1
 SECURITY.md @planetf1
-Dockerfile @planetf1
+src/ @juergenhemelt
+build.gradle @juergenhemelt
+gradle.properties @juergenhemelt

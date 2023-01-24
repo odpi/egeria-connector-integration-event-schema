@@ -46,7 +46,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         this.context = context;
     }
 
-    void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
+    synchronized void setDelegateForTestOnly(ConnectionStrategy connectionStrategy) {
         delegate = connectionStrategy;
     }
 
@@ -109,7 +109,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
         getSchemaRegistryContent();
     }
 
-    protected void getSchemaRegistryContent() throws ConnectorCheckedException {
+    protected synchronized void getSchemaRegistryContent() throws ConnectorCheckedException {
         if(connectionProperties != null && connectionProperties.getConfigurationProperties() != null && connectionProperties.getConfigurationProperties().containsKey("topicNamespace")) {
             eventTypeMapper = new EventTypeMapper(
                     this.getContext(),
