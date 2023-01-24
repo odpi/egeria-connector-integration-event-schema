@@ -29,7 +29,7 @@ public class EventSchemaIntegrationProvider extends ConnectorProviderBase {
 
         super.setConnectorClassName(EventSchemaIntegrationConnector.class.getName());
 
-        ConnectorType connectorType = new ConnectorType();
+        var connectorType = new ConnectorType();
         connectorType.setType(ConnectorType.getConnectorTypeType());
         connectorType.setGUID(connectorTypeGUID);
         connectorType.setQualifiedName(connectorTypeQualifiedName);

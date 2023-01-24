@@ -11,8 +11,6 @@ import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttribu
 import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
 import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
-import org.odpi.openmetadata.frameworks.connectors.properties.beans.EnumSchemaType;
-import org.odpi.openmetadata.frameworks.connectors.properties.beans.LiteralSchemaType;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
 
 import java.util.ArrayList;
@@ -73,7 +71,7 @@ public class SchemaAttributeMapper {
             }
             for (JsonElement typetype : typeObject) {
                 if (typetype.isJsonObject()) {
-                    JsonObject typetypeObject = (JsonObject) typetype;
+                    var typetypeObject = (JsonObject) typetype;
                     if (typetypeObject.has(NAME)) {
                         return typetypeObject.get(NAME).getAsString();
                     }
@@ -113,7 +111,7 @@ public class SchemaAttributeMapper {
             }
             for (JsonElement typetype : typeObject) {
                 if (typetype.isJsonPrimitive()) {
-                    return "null".equals(typetype.getAsString());
+                    return typetype.getAsString().equals("null");
                 }
             }
         }
@@ -133,7 +131,7 @@ public class SchemaAttributeMapper {
             }
             for (JsonElement typetype : typeObject) {
                 if (typetype.isJsonObject()) {
-                    JsonObject typetypeObject = (JsonObject) typetype;
+                    var typetypeObject = (JsonObject) typetype;
                     if (typetypeObject.has(FIELDS)) {
                         fields = typetypeObject.get(FIELDS);
                     }
@@ -150,7 +148,7 @@ public class SchemaAttributeMapper {
 //            }
         }
         if (fields != null && fields.isJsonArray()) {
-            JsonArray fieldsObject = (JsonArray) fields;
+            var fieldsObject = (JsonArray) fields;
             for (JsonElement field : fieldsObject) {
                 if (field.isJsonObject()) {
                     children.add((JsonObject) field);
@@ -207,14 +205,14 @@ public class SchemaAttributeMapper {
     }
 
     public String createEgeriaSchemaE() {
-        EnumSchemaTypeProperties enumSchemaTypeProperties = new EnumSchemaTypeProperties();
-        EnumSchemaType enumSchemaType;
+        var enumSchemaTypeProperties = new EnumSchemaTypeProperties();
+        
 
-        LiteralSchemaTypeProperties literalSchemaTypeProperties = new LiteralSchemaTypeProperties();
-        LiteralSchemaType literalSchemaType;
+        var literalSchemaTypeProperties = new LiteralSchemaTypeProperties();
+        
         try {
             guid = context.createEnumSchemaType(enumSchemaTypeProperties, "");
-            String guid2 = context.createLiteralSchemaType(literalSchemaTypeProperties);
+            
         } catch (InvalidParameterException | UserNotAuthorizedException | PropertyServerException e) {
             e.printStackTrace();
         }
@@ -225,7 +223,7 @@ public class SchemaAttributeMapper {
         mapEgeriaSchemaAttribute();
         String guid = createEgeriaSchemaAttribute();
         for (JsonObject json : getChildren()) {
-            SchemaAttributeMapper mapper = new SchemaAttributeMapper(context, json, guid, SchemaAttributeElement.class.getName());
+            var mapper = new SchemaAttributeMapper(context, json, guid, SchemaAttributeElement.class.getName());
             mapper.map();
             childSchemaAttributes.add(mapper);
         }

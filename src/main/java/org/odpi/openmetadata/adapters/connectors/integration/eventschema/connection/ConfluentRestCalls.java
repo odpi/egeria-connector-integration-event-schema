@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -106,7 +107,7 @@ public class ConfluentRestCalls implements ConnectionStrategy {
 
     private HttpEntity<?> createHTTPTemplate() {
         // set authentication
-        HttpHeaders authHeaders = new HttpHeaders();
+        var authHeaders = new HttpHeaders();
 
 //        authHeaders.setBasicAuth(confluentUserid, confluentPassword);
 
@@ -128,17 +129,17 @@ public class ConfluentRestCalls implements ConnectionStrategy {
             throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
-        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+        SSLContext sslContext = SSLContexts.custom()
                 .loadTrustMaterial(null, acceptingTrustStrategy)
                 .build();
 
-        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+        var csf = new SSLConnectionSocketFactory(sslContext);
 
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setSSLSocketFactory(csf)
                 .build();
 
-        HttpComponentsClientHttpRequestFactory requestFactory =
+        var requestFactory =
                 new HttpComponentsClientHttpRequestFactory();
 
         requestFactory.setHttpClient(httpClient);

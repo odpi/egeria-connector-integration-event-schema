@@ -108,7 +108,7 @@ public enum EventSchemaIntegrationConnectorAuditCode implements AuditLogMessageS
      */
     @Override
     public AuditLogMessageDefinition getMessageDefinition(String... params) {
-        AuditLogMessageDefinition messageDefinition = new AuditLogMessageDefinition(logMessageId,
+        var messageDefinition = new AuditLogMessageDefinition(logMessageId,
                 severity,
                 logMessage,
                 systemAction,

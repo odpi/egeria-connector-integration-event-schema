@@ -36,7 +36,7 @@ public class EventTypeMapper {
         String doc = Optional.ofNullable(jsEventType.get("doc")).map(JsonElement::getAsString).orElse("");
         String namespace = jsEventType.get("namespace").getAsString();
         String qualifiedName = subject.concat(SEPARATOR).concat(namespace).concat(SEPARATOR).concat(name).concat(SEPARATOR).concat(version);
-        EventTypeProperties eventProperties = new EventTypeProperties();
+        var eventProperties = new EventTypeProperties();
         eventProperties.setDisplayName(name);
         eventProperties.setQualifiedName(qualifiedName);
         eventProperties.setDescription(doc);

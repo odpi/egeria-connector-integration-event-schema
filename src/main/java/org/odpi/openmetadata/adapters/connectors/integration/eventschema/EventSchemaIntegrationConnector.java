@@ -41,7 +41,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     String targetURL = null;
 
     @Override
-    public void setContext(TopicIntegratorContext context) {
+    public synchronized void setContext(TopicIntegratorContext context) {
         super.setContext(context);
         this.context = context;
     }
@@ -51,12 +51,12 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
     }
 
     @Override
-    public void start() throws ConnectorCheckedException {
+    public synchronized void start() throws ConnectorCheckedException {
         super.start();
         subjectCache = new HashMap<>();
         //TODO: Initialise the cache with information from Egeria, iff possible
 
-        final String methodName = "start";
+         String methodName = "start";
 
         context = this.getContext();
 
