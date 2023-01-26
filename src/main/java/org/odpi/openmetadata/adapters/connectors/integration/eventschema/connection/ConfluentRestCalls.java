@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection;
 
@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This class implements the connection to a real Atlas System
+ * This class implements the connection to an instance of a Confluent (c) Schema Registry
  */
 @SuppressWarnings("Var")
 public class ConfluentRestCalls implements ConnectionStrategy {

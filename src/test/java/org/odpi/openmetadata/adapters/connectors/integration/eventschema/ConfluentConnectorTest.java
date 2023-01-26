@@ -1,26 +1,31 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.odpi.openmetadata.frameworks.connectors.properties.beans.ElementHeader;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.EventTypeElement;
 import org.odpi.openmetadata.accessservices.datamanager.metadataelements.TopicElement;
 import org.odpi.openmetadata.accessservices.datamanager.properties.EventTypeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.SchemaAttributeProperties;
 import org.odpi.openmetadata.accessservices.datamanager.properties.TopicProperties;
 import org.odpi.openmetadata.adapters.connectors.integration.eventschema.connection.ConnectionStrategy;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.ConnectorCheckedException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.InvalidParameterException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.PropertyServerException;
-import org.odpi.openmetadata.frameworks.connectors.ffdc.UserNotAuthorizedException;
+import org.odpi.openmetadata.adapters.repositoryservices.ConnectorConfigurationFactory;
+import org.odpi.openmetadata.frameworks.auditlog.ComponentDevelopmentStatus;
+import org.odpi.openmetadata.frameworks.connectors.Connector;
+import org.odpi.openmetadata.frameworks.connectors.ConnectorBroker;
+import org.odpi.openmetadata.frameworks.connectors.ffdc.*;
+import org.odpi.openmetadata.frameworks.connectors.properties.beans.ElementHeader;
 import org.odpi.openmetadata.integrationservices.topic.connector.TopicIntegratorContext;
+import org.odpi.openmetadata.repositoryservices.auditlog.OMRSAuditLog;
+import org.odpi.openmetadata.repositoryservices.auditlog.OMRSAuditLogDestination;
+import org.odpi.openmetadata.repositoryservices.connectors.stores.auditlogstore.OMRSAuditLogStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +86,40 @@ public class ConfluentConnectorTest {
     void setup() {
         connector.setDelegateForTestOnly(new TestConnectionStrategy());
         connector.setContext(context);
+        connector.setConnectorName("MockedEventSchemaIntegrationConnector");
+
+        // Audit logging
+        ConnectorConfigurationFactory connectorConfigurationFactory = new ConnectorConfigurationFactory();
+        ConnectorBroker broker = new ConnectorBroker();
+
+        Connector auditLogConnector = null;
+        try {
+            ArrayList<String> severities = new ArrayList<String>();
+            severities.add("Trace");
+            auditLogConnector = broker.getConnector(connectorConfigurationFactory.getConsoleAuditLogConnection("console", severities));
+            auditLogConnector.start();
+        } catch (ConnectionCheckedException | ConnectorCheckedException e) {
+            e.printStackTrace();
+            Assertions.assertNull(e, "Unable to get or start audit log via the broker.");
+        }
+        List<OMRSAuditLogStore> auditLogDestinations = new ArrayList<>();
+        auditLogDestinations.add( (OMRSAuditLogStore)auditLogConnector );
+        OMRSAuditLogDestination destination = new OMRSAuditLogDestination(
+                "server1",
+                "Integration Daemon",
+                "org",
+                auditLogDestinations
+        );
+
+        OMRSAuditLog auditLog = new OMRSAuditLog(
+                destination,
+                -1,
+                ComponentDevelopmentStatus.SAMPLE,
+                "ConnectorTest",
+                "Testing of the connector",
+                null
+        );
+        connector.setAuditLog(auditLog);
     }
 
     @Test
@@ -100,6 +139,7 @@ public class ConfluentConnectorTest {
                 .thenReturn("guid");
         when(context.createEventType(anyString(), any(EventTypeProperties.class)))
                 .thenReturn("guid");
+
         connector.refresh();
         EventTypeProperties eventProperties = new EventTypeProperties();
         eventProperties.setDisplayName("testValue");

@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
@@ -154,6 +154,13 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
             }
             return;
         }
+        if( auditLog != null ) {
+            auditLog.logMessage( "addSchema", EventSchemaIntegrationConnectorAuditCode.SCHEMA_TO_BE_MAPPED.getMessageDefinition(
+                    connectorName,
+                    subject,
+                    schemaTree.toString()
+            ));
+        }
         JsonObject ob =schemaTree.getAsJsonObject();
         JsonElement fieldsObject = ob.get("fields");
         String guid ;
@@ -179,7 +186,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
                         EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_MAP_SCHEMA.getMessageDefinition(connectorName,
-                                subject));
+                                subject, e.getLocalizedMessage()));
             }
         }
     }

@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema;
 
@@ -11,7 +11,8 @@ import java.util.List;
 
 
 /**
- * EventSchemaIntegrationProvider is the connector provider for the kafka integration connector that extracts topic names from the broker.
+ * EventSchemaIntegrationProvider is the connector provider for the integration connector
+ * that processes schemas from a Confluent (c) Schema Registry
  */
 public class EventSchemaIntegrationProvider extends ConnectorProviderBase {
 

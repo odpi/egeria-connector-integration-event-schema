@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.mapper;
 
@@ -58,11 +58,12 @@ public class EventTypeMapperTest {
 //        when(context.findTopics(topicNameIn.concat(".*"), 1, 0))
 //                .thenReturn(new ArrayList<TopicElement>());
 
-        Assertions.assertThrows(TopicNotFoundException.class, () -> {
+        Throwable t = Assertions.assertThrows(TopicNotFoundException.class, () -> {
             String topicName;
             topicName = eventTypeMapper.getTopicGuid(topicNameIn);
             Assertions.assertNotNull(topicName);
         });
+        System.out.println(t.getLocalizedMessage());
 
     }
 }

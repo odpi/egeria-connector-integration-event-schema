@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Copyright Contributors to the ODPi Egeria project. */
+/* Copyright Contributors to the  Egeria project. */
 package org.odpi.openmetadata.adapters.connectors.integration.eventschema.ffdc;
 
 import org.odpi.openmetadata.frameworks.auditlog.messagesets.AuditLogMessageDefinition;
@@ -45,11 +45,16 @@ public enum EventSchemaIntegrationConnectorAuditCode implements AuditLogMessageS
             "No specific action is required.  This message is to confirm the configuration for the integration connector."),
     UNABLE_TO_MAP_SCHEMA("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0005",
             OMRSAuditLogRecordSeverity.EXCEPTION,
-            "The {0} integration connector was unable to map the schema of subject {1}.",
+            "The {0} integration connector was unable to map the schema of subject {1}. The original error message is: {2}",
             "Either the parent of the schema is not available or the user is not authorized.",
             "Ensure that all Topics have been inserted into Egeria before inserting EventTypes. " +
-                    "Ensure that the user has access to all relevant Topics and EventTypes")
-    ;
+                    "Ensure that the user has access to all relevant Topics and EventTypes" ),
+    SCHEMA_TO_BE_MAPPED("EVENT-SCHEMA-INTEGRATION-CONNECTOR-0006",
+            OMRSAuditLogRecordSeverity.TRACE,
+            "The {0} integration connector will try to map the schema of subject {1}. The schema is: {2}",
+            "No action required.",
+            "No action required." )
+            ;
 
     private final String logMessageId;
     private final OMRSAuditLogRecordSeverity severity;
