@@ -146,6 +146,11 @@ publishing {
                         name = 'Juergen Hemelt'
                         email = 'juergen.hemelt@atruvia.de'
                     }
+                     developer {
+                        id = 'planetf1'
+                        name = 'Nigel Jones'
+                        email = 'nigel.l.jones+git@gmail.com'
+                    }
                 }
                 scm {
                     connection = 'scm:git:git://github.com/odpi/egeria-connection-integration-event-schema.git'
