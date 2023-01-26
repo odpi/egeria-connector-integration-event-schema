@@ -137,14 +137,23 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
             for (String version : versions) {
                 if (!currentVersions.contains(version)) {
                     String new_schema = delegate.getSchema(subject, version);
-                    addSchema(new_schema, version, subject);
-                    currentVersions.add(version);
+                    if( addSchema(new_schema, version, subject) ) {
+                        currentVersions.add(version);
+                    }
                 } //else -> everything is fine. Version of schema is already in egeria
             }
         }
     }
 
-    private void addSchema(String schema, String version, String subject) {
+    /**
+     * Adds an event schema to the open metadata.
+     *
+     * @param schema    the schema as json string
+     * @param version   the version of the schema
+     * @param subject   The subject to which the schema belongs. Is used to figure out the topic to which the Event type is linked to.
+     * @return true when sucessfully added the schema, otherwise false
+     */
+    private boolean addSchema(String schema, String version, String subject) {
         JsonElement schemaTree = JsonParser.parseString(schema);
         if( schemaTree.isJsonArray()) {
             if (auditLog != null) {
@@ -152,7 +161,7 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                         EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_PARSE_SCHEMA.getMessageDefinition(connectorName,
                                 subject));
             }
-            return;
+            return false;
         }
         if( auditLog != null ) {
             auditLog.logMessage( "addSchema", EventSchemaIntegrationConnectorAuditCode.SCHEMA_TO_BE_MAPPED.getMessageDefinition(
@@ -182,13 +191,16 @@ public class EventSchemaIntegrationConnector extends TopicIntegratorConnector {
                         EventSchemaIntegrationConnectorAuditCode.NO_TOPIC_FOUND.getMessageDefinition(connectorName,
                                 subject));
             }
+            return false;
         } catch (InvalidParameterException | PropertyServerException | UserNotAuthorizedException | UnableToCreateSchemaAttributeException e) {
             if (auditLog != null) {
                 auditLog.logMessage("addSchema",
                         EventSchemaIntegrationConnectorAuditCode.UNABLE_TO_MAP_SCHEMA.getMessageDefinition(connectorName,
                                 subject, e.getLocalizedMessage()));
             }
+            return false;
         }
+        return true;
     }
 
 }
