@@ -1,7 +1,13 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
- * Copyright Contributors to the ODPi Egeria project.
+ * Copyright Contributors to the Egeria project.
  */
+
+buildscript {
+    repositories {
+        maven { url mavenUrl }
+    }
+}
 
 plugins {
     id 'java-library'
@@ -15,9 +21,9 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    mavenCentral()
-    maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
-    mavenLocal() // note - this may pick up modified classes from ~/.m2
+    maven {
+        url mavenUrl
+    }
 }
 
 // ensures we pick up the very latest snapshots when built
@@ -29,16 +35,18 @@ configurations.all {
 // TODO: Specify group, name, description, version of new code being built
 group = 'org.odpi.egeria'
 version = '1.0-SNAPSHOT'
-ext.name = 'New Egeria code'
-description = 'New code for Egeria'
+ext.name = 'egeria-connector-integration-event-schema'
+description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.6'
+    egeriaversion = '3.14'
     slf4jVersion = '1.7.36'
-    jacksonVersion = '2.13.2'
-    jupiterVersion = '5.9.1'
-    httpclientVersion = '4.5.13'
+    jacksonVersion = '2.14.2'
+    jupiterVersion = '5.9.2'
+    httpclientVersion = '4.5.14'
+    mockitoVersion ='4.11.0'
+    gsonVersion ='2.10.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
@@ -50,11 +58,15 @@ dependencies {
 
     // Needed for build and run
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
 
     // Only needed to compile test code
     testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation "org.odpi.egeria:connector-configuration-factory:${egeriaversion}"
 
 }
 
@@ -130,16 +142,20 @@ publishing {
                 }
                 developers {
                     developer {
+                        id = 'juergenhemelt'
+                        name = 'Juergen Hemelt'
+                        email = 'juergen.hemelt@atruvia.de'
+                    }
+                     developer {
                         id = 'planetf1'
                         name = 'Nigel Jones'
                         email = 'nigel.l.jones+git@gmail.com'
                     }
                 }
                 scm {
-                    // TODO: Update references to git source for this particular repository
-                    connection = 'scm:git:git://github.com/odpi/egeria-template-newrepo.git'
-                    developerConnection = 'scm:git:ssh://github.com/odpi/egeria/egeria-template-newrepo.git'
-                    url = 'http://github.com/odpi/egeria-template-newrepo/'
+                    connection = 'scm:git:git://github.com/odpi/egeria-connection-integration-event-schema.git'
+                    developerConnection = 'scm:git:ssh://github.com/odpi/egeria-connection-integration-event-schema.git'
+                    url = 'http://github.com/odpi/egeria-connection-integration-event-schema/'
                 }
             }
             // Override the project name & description for the pom based on properties set in the child build.gradle (hard to default & required for maven central)
