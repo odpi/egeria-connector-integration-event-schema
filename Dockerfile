@@ -19,7 +19,6 @@ ENV version ${version}
 LABEL org.opencontainers.image.description = "Egeria with Strimzi connector" \
       org.opencontainers.image.documentation = "https://github.com/odpi/egeria-connector-integration-event-schema"
 
-WORKDIR .
 COPY build/libs/egeria-connector-integration-event-schema-${version}*.jar /deployments/server/lib
 
 # Uncomment to enable Java remote debugging
