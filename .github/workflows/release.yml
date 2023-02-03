@@ -60,6 +60,7 @@ jobs:
       - name: Build and push( to quay.io and docker.io (no tag latest)
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: odpi/egeria:${{ env.VERSION }}, quay.io/odpi/egeria-connector-integration-event-schema:${{ env.VERSION }}
           platforms: linux/amd64,linux/arm64

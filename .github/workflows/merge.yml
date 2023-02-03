@@ -67,6 +67,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main'}}
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: odpi/egeria:${{ env.VERSION }}, odpi/egeria:latest, quay.io/odpi/egeria-connector-integration-event-schema:${{ env.VERSION }}, quay.io/odpi/egeria-connector-integration-event-schema:latest
           platforms: linux/amd64,linux/arm64
@@ -74,6 +75,7 @@ jobs:
         if: ${{ github.ref != 'refs/heads/main'}}
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: odpi/egeria:${{ env.VERSION }}, quay.io/odpi/egeria-connector-integration-event-schema:${{ env.VERSION }}
           platforms: linux/amd64,linux/arm64
