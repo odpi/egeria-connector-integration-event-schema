@@ -94,7 +94,7 @@ public class ConfluentConnectorTest {
 
         Connector auditLogConnector = null;
         try {
-            ArrayList<String> severities = new ArrayList<String>();
+            ArrayList<String> severities = new ArrayList<>();
             severities.add("Trace");
             auditLogConnector = broker.getConnector(connectorConfigurationFactory.getConsoleAuditLogConnection("console", severities));
             auditLogConnector.start();

@@ -40,7 +40,7 @@ description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.14'
+    egeriaversion = '3.15'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.14.2'
     jupiterVersion = '5.9.2'
@@ -67,6 +67,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation "org.odpi.egeria:connector-configuration-factory:${egeriaversion}"
+    testImplementation "org.odpi.egeria:fvt-utilities:${egeriaversion}"
 
 }
 
