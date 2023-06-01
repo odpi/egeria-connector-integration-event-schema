@@ -40,7 +40,7 @@ description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.15'
+    egeriaversion = '4.1'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.14.2'
     jupiterVersion = '5.9.3'
