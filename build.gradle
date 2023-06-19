@@ -43,7 +43,7 @@ ext {
     egeriaversion = '3.15'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.14.2'
-    jupiterVersion = '5.9.2'
+    jupiterVersion = '5.9.3'
     httpclientVersion = '4.5.14'
     mockitoVersion ='4.11.0'
     gsonVersion ='2.10.1'
