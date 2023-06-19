@@ -9,8 +9,6 @@ updates:
     time: "03:00"
     timezone: "Etc/UTC"
   open-pull-requests-limit: 100
-  reviewers:
-  - planetf1
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
@@ -18,8 +16,6 @@ updates:
     time: "03:00"
     timezone: "Etc/UTC"
   open-pull-requests-limit: 10
-  reviewers:
-  - planetf1
 - package-ecosystem: docker
   directory: "/"
   schedule:
@@ -27,5 +23,3 @@ updates:
     time: "03:00"
     timezone: "Etc/UTC"
   open-pull-requests-limit: 5
-  reviewers:
-    - planetf1
