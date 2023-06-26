@@ -14,27 +14,11 @@ and each attribute is mapped to an [EventSchemaAttribute](https://egeria-project
 Nested schema attributes are recursively mapped with the [NestedSchemaAttribute](https://egeria-project.org/types/5/0505-Schema-Attributes/#nestedschemaattribute-relationship)
 relationship.
 
-
-[//]: # (This integration connector needs to be configured. The following steps can be performed using the postman collection to set this connector up.)
+For detailed documentation see [Event Schema Integration Connector](https://egeria-project.org/connectors/integration/event-schema-integration-connector)
 
 ## Known Limitations
 * Currently only Avro Schemas are supported. 
 
-
-## For testing
-
-### Build
-On a terminal,
-* navigate to the folder that this README.md is in.
-* run ```./gradlew clean build```
-
-### Running locally for testing
-
-You will need to have an OMAG platform with the connector jar, a metadata server defined.
-
-### Testing mutations
-
-[//]: # (TODO: extend with testing information)
 
 ----
 License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
