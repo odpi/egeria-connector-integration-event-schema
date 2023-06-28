@@ -3,12 +3,6 @@
  * Copyright Contributors to the Egeria project.
  */
 
-buildscript {
-    repositories {
-        maven { url mavenUrl }
-    }
-}
-
 plugins {
     id 'java-library'
     id "com.github.johnrengelman.shadow" version "7.1.2"
@@ -21,10 +15,10 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    maven {
-        url mavenUrl
-    }
+    mavenCentral()
+    maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
 }
+
 
 // ensures we pick up the very latest snapshots when built
 configurations.all {
