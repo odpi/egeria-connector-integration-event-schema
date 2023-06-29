@@ -37,6 +37,10 @@ ext {
     egeriaVersion = '4.1'
     httpClient5Version = '5.2.1'
     gsonVersion = '2.10.1'
+    slf4jVersion = '1.7.36'
+    jacksonVersion = '2.14.2'
+    jupiterVersion = '5.9.3'
+    mockitoVersion ='5.3.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
