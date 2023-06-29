@@ -8,11 +8,6 @@
 
 # TODO: Update with new owners of files added
 /* @davidradl
-/.github @planetf1
-*.gradle @planetf1
-gradle* @planetf1
-gradle/ @planetf1
-SECURITY.md @planetf1
 src/ @juergenhemelt
 build.gradle @juergenhemelt
 gradle.properties @juergenhemelt

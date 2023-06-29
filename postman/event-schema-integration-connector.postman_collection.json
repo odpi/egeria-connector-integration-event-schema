@@ -1,0 +1,227 @@
+{
+	"info": {
+		"name": "Event schema integration connector",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Update the server type name",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{EGERIA_URL}}/open-metadata/admin-services/users/{{EGERIA_USER}}/servers/{{EGERIA_SERVER}}/server-type?typeName=Integration Daemon",
+					"host": [
+						"{{EGERIA_URL}}"
+					],
+					"path": [
+						"open-metadata",
+						"admin-services",
+						"users",
+						"{{EGERIA_USER}}",
+						"servers",
+						"{{EGERIA_SERVER}}",
+						"server-type"
+					],
+					"query": [
+						{
+							"key": "typeName",
+							"value": "Integration Daemon"
+						}
+					]
+				},
+				"description": "Requests information about the author of the server platform."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Configure the default audit log",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{EGERIA_URL}}/open-metadata/admin-services/users/{{EGERIA_USER}}/servers/{{EGERIA_SERVER}}/audit-log-destinations/default",
+					"host": [
+						"{{EGERIA_URL}}"
+					],
+					"path": [
+						"open-metadata",
+						"admin-services",
+						"users",
+						"{{EGERIA_USER}}",
+						"servers",
+						"{{EGERIA_SERVER}}",
+						"audit-log-destinations",
+						"default"
+					]
+				},
+				"description": "Requests information about the author of the server platform."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Configure the event schema integrator service",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"class\": \"IntegrationServiceRequestBody\",\n    \"omagserverPlatformRootURL\": \"{{EGERIA_MDS_URL}}\",\n    \"omagserverName\": \"{{EGERIA_MDS_SERVER}}\",\n    \"connectorUserId\": \"{{EGERIA_USER}}\",\n    \"integrationConnectorConfigs\": [\n        {\n            \"class\": \"IntegrationConnectorConfig\",\n            \"connectorName\": \"EventSchemaIntegrator\",\n            \"typeName\": \"Event Schema Integration Connector\",\n            \"connection\": {\n                \"class\": \"Connection\",\n                \"connectorType\": {\n                    \"class\": \"ConnectorType\",\n                    \"connectorProviderClassName\": \"org.odpi.openmetadata.adapters.connectors.integration.eventschema.EventSchemaIntegrationProvider\"\n                },\n                \"configurationProperties\": {\n                    \"topicNamespace\": \"{{TOPIC_NAMESPACE}}\"\n                },\n                \"endpoint\": {\n                    \"class\": \"Endpoint\",\n                    \"address\": \"{{SCHEMA_REGISTRY_ENDPOINT}}\"\n                }\n            },\n            \"metadataSourceQualifiedName\": \"{{EVENT_SCHEMA_SOURCE_NAME}}\",\n            \"refreshTimeInterval\": \"{{EVENT_SCHEMA_CONNECTOR_REFRESH_INTERVAL}}\",\n            \"permittedSynchronization\": \"FROM_THIRD_PARTY\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{EGERIA_URL}}/open-metadata/admin-services/users/{{EGERIA_USER}}/servers/{{EGERIA_SERVER}}/integration-services/topic-integrator",
+					"host": [
+						"{{EGERIA_URL}}"
+					],
+					"path": [
+						"open-metadata",
+						"admin-services",
+						"users",
+						"{{EGERIA_USER}}",
+						"servers",
+						"{{EGERIA_SERVER}}",
+						"integration-services",
+						"topic-integrator"
+					]
+				},
+				"description": "Requests information about the author of the server platform."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Start the evtschema1 Integration server",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{EGERIA_URL}}/open-metadata/admin-services/users/{{EGERIA_USER}}/servers/{{EGERIA_SERVER}}/instance",
+					"host": [
+						"{{EGERIA_URL}}"
+					],
+					"path": [
+						"open-metadata",
+						"admin-services",
+						"users",
+						"{{EGERIA_USER}}",
+						"servers",
+						"{{EGERIA_SERVER}}",
+						"instance"
+					]
+				},
+				"description": "Requests information about the author of the server platform."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "EGERIA_URL",
+			"value": "https://localhost:9443"
+		},
+		{
+			"key": "EGERIA_MDS_SERVER",
+			"value": "mds1",
+			"type": "default"
+		},
+		{
+			"key": "EGERIA_USER",
+			"value": "garygeeke",
+			"type": "default"
+		},
+		{
+			"key": "EGERIA_SERVER",
+			"value": "evtschema1",
+			"type": "default"
+		},
+		{
+			"key": "EGERIA_MDS_URL",
+			"value": "https://localhost:8443",
+			"type": "default"
+		},
+		{
+			"key": "EVENT_SCHEMA_CONNECTOR_REFRESH_INTERVAL",
+			"value": "5",
+			"type": "default"
+		},
+		{
+			"key": "SCHEMA_REGISTRY_ENDPOINT",
+			"value": "https://my-schemaregistry:8081",
+			"type": "default"
+		},
+		{
+			"key": "EVENT_SCHEMA_SOURCE_NAME",
+			"value": "my-event-metadata-source",
+			"type": "default"
+		}
+	]
+}
