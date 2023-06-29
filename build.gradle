@@ -8,10 +8,37 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
     id 'idea'
     id 'maven-publish'
+    // Checks for unnecessary dependencies
+    id 'com.autonomousapps.dependency-analysis' version "1.19.0"
+    // helps resolve log implementation clashes
+    id 'dev.jacomet.logging-capabilities' version "0.11.0"
+    // This plugin helps resolve jakarta/javax dev.jacomet.logging-capabilities
+    id 'org.gradlex.java-ecosystem-capabilities' version "1.1"
 }
+
+// Mostly java, so default to this for now
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.gradlex.java-ecosystem-capabilities'
+// temp disabled due to k/wrapp
+// apply plugin: 'dev.jacomet.logging-capabilities'
+// As we've migrated from maven - we'll assume all submodules publish directly to maven
+apply plugin: 'maven-publish'
 
 if (System.getenv("CI")) {
     apply plugin: 'signing'
+}
+
+if (System.getenv("CUSTOM_REPOSITORIES")) {
+    logger.info("Custom repositories found!")
+
+// TODO: Check if the env is split correctly with ";"
+    System.getenv("CUSTOM_REPOSITORIES").split(";").each {
+        logger.info("Adding custom repository: " + it.toString())
+        project.repositories.maven { repo ->
+            repo.url = uri(it.toString()) }
+    }
 }
 
 repositories {
@@ -19,12 +46,18 @@ repositories {
     maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
 }
 
+logger.info("Repository list:")
+project.repositories.each { logger.info("Name: " + it.name + " url: " + it.url) }
+
+logger.info("Buildscript:")
+project.buildscript.repositories.each { logger.info("Name: " + it.name + " url: " + it.url) }
 
 // ensures we pick up the very latest snapshots when built
 configurations.all {
     // check for updates every build
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
+
 
 // TODO: Specify group, name, description, version of new code being built
 group = 'org.odpi.egeria'
@@ -37,10 +70,6 @@ ext {
     egeriaVersion = '4.1'
     httpClient5Version = '5.2.1'
     gsonVersion = '2.10.1'
-    slf4jVersion = '1.7.36'
-    jacksonVersion = '2.14.2'
-    jupiterVersion = '5.9.3'
-    mockitoVersion ='5.3.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
