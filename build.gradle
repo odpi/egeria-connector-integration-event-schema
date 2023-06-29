@@ -3,12 +3,6 @@
  * Copyright Contributors to the Egeria project.
  */
 
-buildscript {
-    repositories {
-        maven { url mavenUrl }
-    }
-}
-
 plugins {
     id 'java-library'
     id "com.github.johnrengelman.shadow" version "7.1.2"
@@ -21,10 +15,10 @@ if (System.getenv("CI")) {
 }
 
 repositories {
-    maven {
-        url mavenUrl
-    }
+    mavenCentral()
+    maven { url("https://oss.sonatype.org/content/repositories/snapshots") }
 }
+
 
 // ensures we pick up the very latest snapshots when built
 configurations.all {
@@ -40,35 +34,38 @@ description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaversion = '3.15'
+    egeriaVersion = '4.1'
+    httpClient5Version = '5.2.1'
+    gsonVersion = '2.10.1'
     slf4jVersion = '1.7.36'
     jacksonVersion = '2.14.2'
     jupiterVersion = '5.9.3'
-    httpclientVersion = '4.5.14'
     mockitoVersion ='5.3.1'
-    gsonVersion ='2.10.1'
 }
 
 // For a single module, add here. For multiple modules, refactor and use constraints (see main egeria build.gradle for an example)
 // TODO: Update dependencies for this module
 dependencies {
+    implementation platform("org.odpi.egeria:egeria:${egeriaVersion}")
 
-    // Only used for build - already present in server chassis at runtime - similar to 'provided' with maven
-    compileOnly "org.odpi.egeria:audit-log-framework:${egeriaversion}"
-
-    // Needed for build and run
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
-    implementation "org.odpi.egeria:topic-integrator-api:${egeriaversion}"
+    implementation "org.odpi.egeria:open-connector-framework"
+    implementation "org.odpi.egeria:repository-services-apis"
+    implementation "org.odpi.egeria:data-manager-api"
+    implementation "org.odpi.egeria:open-integration-framework"
+    implementation "org.odpi.egeria:topic-integrator-api"
+    implementation "org.odpi.egeria:audit-log-framework"
     implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "org.apache.httpcomponents.client5:httpclient5:${httpClient5Version}"
+
+    compileOnly "org.springframework:spring-web"
+    compileOnly "org.apache.commons:commons-lang3"
 
     // Only needed to compile test code
-    testCompileOnly "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
-    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
-    testImplementation "org.odpi.egeria:connector-configuration-factory:${egeriaversion}"
-    testImplementation "org.odpi.egeria:fvt-utilities:${egeriaversion}"
-
+    testCompileOnly "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "org.mockito:mockito-junit-jupiter"
+    testImplementation "org.odpi.egeria:connector-configuration-factory"
+    testImplementation "org.odpi.egeria:fvt-utilities"
 }
 
 
@@ -88,8 +85,8 @@ test {
 
 // Maven Central (technically sonatype oss) requires we distribute source and javadoc.
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withJavadocJar()
     withSourcesJar()
 }
@@ -97,8 +94,8 @@ java {
 // More Java language settings
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
     options.incremental = true
     options.fork = true
     options.failOnError = true
