@@ -67,7 +67,7 @@ description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
 ext {
-    egeriaVersion = '4.1'
+    egeriaVersion = '4.2'
     httpClient5Version = '5.2.1'
     gsonVersion = '2.10.1'
 }
