@@ -16,5 +16,5 @@ LABEL org.opencontainers.image.description = "Egeria with event schema connector
 
 ENV CONNECTOR_VERSION ${CONNECTOR_VERSION}
 
-COPY build/libs/egeria-connector-integration-event-schema-${CONNECTOR_VERSION}-jar-with-dependencies.jar /deployments/server/lib
+COPY build/libs/egeria-connector-integration-event-schema-${CONNECTOR_VERSION}.jar /deployments/server/lib
 
