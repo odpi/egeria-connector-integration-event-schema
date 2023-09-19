@@ -62,7 +62,7 @@ configurations.all {
 // TODO: Specify group, name, description, version of new code being built
 group = 'org.odpi.egeria'
 version = '1.0-SNAPSHOT'
-ext.name = 'egeria-connector-integration-event-schema'
+// ext.name = 'egeria-connector-integration-event-schema'
 description = 'Egeria integration connector for Confluent (c) Schema Registry.'
 
 // TODO: Specify Dependency versions as variables
