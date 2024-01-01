@@ -26,7 +26,7 @@ jobs:
           arguments: build
       # --
       - name: Upload Connector
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           # TODO: verify - Update name & artifacts to upload
           name:  Jar
