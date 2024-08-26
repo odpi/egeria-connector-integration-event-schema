@@ -1,0 +1,18 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ * Copyright Contributors to the ODPi Egeria project.
+ */
+
+// Can pin plugin versions here as needed
+pluginManagement {
+    plugins {
+    }
+}
+rootProject.name = 'egeria-connector-integration-event-schema'
+
+// For multi modules, list each *project name* here
+// include(':egeria-connector-postgres')
+
+// These define the project names. For now we'll keep them the same as the directory
+// Not needed if the project name desired exactly matches the directory name
+//project(':egeria-connector-postgres').projectDir = file('egeria-connector-postgres-directory')
